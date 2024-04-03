@@ -25,7 +25,7 @@ public class StorageBarrelsImpl extends UnicastRemoteObject implements StorageBa
 
         try(Scanner sc = new Scanner(System.in)){
 
-            Gateway gateway = (Gateway) Naming.lookup("rmi://localhost:32450/Server");
+            Gateway gateway = (Gateway) Naming.lookup("rmi://localhost:32450/server");
             StorageBarrelsImpl storageBarrelsImpl = new StorageBarrelsImpl();
             gateway.barrel(args[0], storageBarrelsImpl);
             System.out.println("Barrel " + args[0] + " sent a connection to server");

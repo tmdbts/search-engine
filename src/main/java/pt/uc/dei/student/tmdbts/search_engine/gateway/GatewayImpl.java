@@ -20,7 +20,6 @@ public class GatewayImpl extends UnicastRemoteObject implements Gateway{
 
     public void registerForCallback(String barrelName, GatewayCallback callbackClientObject) throws RemoteException {
         System.out.println("Storage Barrel " + barrelName + " registered for callbacks.");
-        // Supondo que 'callbacks' é um HashMap<String, GatewayCallback>
         callbacks.put(barrelName, callbackClientObject);
     }
 
@@ -66,7 +65,7 @@ public class GatewayImpl extends UnicastRemoteObject implements Gateway{
         try (Scanner sc = new Scanner(System.in)){
             GatewayImpl gatewayImpl = new GatewayImpl();
             LocateRegistry.createRegistry(rmiPort);
-            Naming.rebind("rmi://localhost:32450/Server", gatewayImpl);
+            Naming.rebind("rmi://localhost:32450/server", gatewayImpl);
             System.out.println("Gateway is ready!");
 
             while (true){
