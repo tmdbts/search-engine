@@ -20,6 +20,10 @@ public class Downloader implements Runnable {
         int PORT = 4321;
     }
 
+    public Downloader(URL url) {
+        this.url = url.getFullURL();
+    }
+
     private List<URL> getURLs(String url) {
         List<Element> fetchedUrls = HtmlParser.getURLs(url);
 
@@ -36,6 +40,8 @@ public class Downloader implements Runnable {
 //        TODO: get words
 
 //        TODO: send data to inverted index
+
+        notify();
     }
 
     /**
