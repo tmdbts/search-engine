@@ -4,4 +4,6 @@ import java.rmi.*;
 
 public interface StorageBarrels extends Remote {
     public void printOnBarrel(String s) throws java.rmi.RemoteException;
+
+    public void search(String query) throws java.rmi.RemoteException;
 }

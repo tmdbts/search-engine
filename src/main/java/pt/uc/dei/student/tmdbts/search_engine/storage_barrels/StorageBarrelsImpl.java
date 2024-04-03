@@ -16,6 +16,11 @@ public class StorageBarrelsImpl extends UnicastRemoteObject implements StorageBa
         System.out.println("> " +  s);
     }
 
+    @Override
+    public void search(String query) throws RemoteException {
+        return;
+    }
+
     public void notifyNewDataAvailable(String barrelName, String message) throws RemoteException {
         System.out.println("Notificação recebida para " + barrelName + ": " + message);
     }
