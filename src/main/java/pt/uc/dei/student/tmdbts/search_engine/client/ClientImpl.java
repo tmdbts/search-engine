@@ -1,12 +1,13 @@
 package pt.uc.dei.student.tmdbts.search_engine.client;
 
+import pt.uc.dei.student.tmdbts.search_engine.URL;
 import pt.uc.dei.student.tmdbts.search_engine.gateway.Gateway;
 import java.rmi.Naming;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.Scanner;
 
-public class ClientImpl extends UnicastRemoteObject implements Client{
+public class ClientImpl extends UnicastRemoteObject{
 
     ClientImpl() throws RemoteException{
         super();
@@ -15,13 +16,13 @@ public class ClientImpl extends UnicastRemoteObject implements Client{
     public static void main(String args[]) {
         try (Scanner sc = new Scanner(System.in)) {
             Gateway gateway = (Gateway) Naming.lookup("rmi://localhost:32450/server");
-            System.out.println(gateway.startingServer());
 
             while (true){
                 System.out.print("Welcome to Search Engine!\nEnter your query or URL to index -> ");
                 String query = sc.nextLine();
                 if (query.startsWith("https://")){
-                    gateway.indexURL(query);
+                    URL url = new URL(query);
+                    gateway.addURL(url);
                     System.out.println("URL requested for indexing: " + query);
                 } else {
                     String result = gateway.search(query);
