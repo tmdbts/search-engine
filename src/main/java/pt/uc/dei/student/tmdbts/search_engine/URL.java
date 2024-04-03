@@ -1,6 +1,10 @@
 package pt.uc.dei.student.tmdbts.search_engine;
 
+import org.jsoup.nodes.Element;
+
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * URL
@@ -37,6 +41,16 @@ public class URL implements Serializable {
         this.domain = fullURL.split("://")[1].split("/")[0];
         this.path = fullURL.split("://")[1].split("/")[1].split("\\?")[0];
         this.query = fullURL.split("://")[1].split("/")[1].split("\\?")[1];
+    }
+
+    public static List<URL> parse(List<Element> urls) {
+        List<URL> parsedURLs = new ArrayList<>();
+
+        for (Element url : urls) {
+            parsedURLs.add(new URL(url.attr("abs:href")));
+        }
+
+        return parsedURLs;
     }
 
     /**
@@ -82,5 +96,10 @@ public class URL implements Serializable {
      */
     public String getQuery() {
         return query;
+    }
+
+    @Override
+    public String toString() {
+        return fullURL;
     }
 }
