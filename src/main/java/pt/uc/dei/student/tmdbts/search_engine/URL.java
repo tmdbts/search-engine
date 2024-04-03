@@ -39,7 +39,22 @@ public class URL implements Serializable {
         this.fullURL = fullURL;
         this.protocol = fullURL.split("://")[0];
         this.domain = fullURL.split("://")[1].split("/")[0];
+
+        if (fullURL.split("://")[1].split("/").length == 1) {
+            this.path = "";
+            this.query = "";
+
+            return;
+        }
+
         this.path = fullURL.split("://")[1].split("/")[1].split("\\?")[0];
+
+        if (fullURL.split("://")[1].split("/")[1].split("\\?").length == 1) {
+            this.query = "";
+
+            return;
+        }
+
         this.query = fullURL.split("://")[1].split("/")[1].split("\\?")[1];
     }
 
