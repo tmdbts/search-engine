@@ -7,37 +7,35 @@ import java.net.URI;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
-import java.rmi.server.RMIClientSocketFactory;
-import java.rmi.server.RMIServerSocketFactory;
-import java.rmi.server.UnicastRemoteObject;
 import java.util.HashSet;
 
-public class Crawler extends UnicastRemoteObject {
-    protected Crawler() throws RemoteException {
-    }
-
-    protected Crawler(int port) throws RemoteException {
-        super(port);
-    }
-
-    protected Crawler(int port, RMIClientSocketFactory csf, RMIServerSocketFactory ssf) throws RemoteException {
-        super(port, csf, ssf);
-    }
-
+public class Crawler {
+    /**
+     * Main method of the Crawler class.
+     * <p>
+     * This method is responsible for the main loop of the Crawler.
+     * It will connect to the server and request URLs to download.
+     * <p>
+     * The Crawler will download the URLs and store them in the Storage Barrels.
+     * <p>
+     * The Crawler will download up to 5 URLs at the same time.
+     *
+     * @apiNote Might make a ton of requests to the server.
+     */
     public void run() {
         HashSet<Thread> activeDownloaders = new HashSet<>();
 
         try {
-            Crawler crawler = (Crawler) Naming.lookup("rmi://localhost:32450/TO_DO");
+            Gateway gateway = (Gateway) Naming.lookup("rmi://localhost:32450/server");
 
             while (true) {
                 if (activeDownloaders.size() >= 5) { /* TODO: Magic number */
-                    wait();
-
                     activeDownloaders.removeIf(thread -> !thread.isAlive());
 
                     continue;
                 }
+
+                if (gateway.isQueueEmpty()) continue;
 
                 URI url = gateway.getURL();
 
@@ -47,8 +45,10 @@ public class Crawler extends UnicastRemoteObject {
                 thread.start();
                 activeDownloaders.add(thread);
             }
-        } catch (NotBoundException | MalformedURLException | RemoteException | InterruptedException e) {
-            throw new RuntimeException(e);
+        } catch (NotBoundException | MalformedURLException e) {
+            System.out.println("Error connecting to server: " + e.getMessage());
+        } catch (RemoteException e) {
+            System.out.println("Error getting URL from server: " + e.getMessage());
         }
     }
 }
