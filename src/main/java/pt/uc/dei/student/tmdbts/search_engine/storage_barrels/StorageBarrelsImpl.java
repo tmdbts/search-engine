@@ -7,16 +7,19 @@ import pt.uc.dei.student.tmdbts.search_engine.protocol.SEProtocol;
 import java.rmi.Naming;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.Scanner;
-import java.util.concurrent.ExecutionException;
 
 public class StorageBarrelsImpl extends UnicastRemoteObject implements StorageBarrels, GatewayCallback {
-
+    private Thread listenerThread;
     private SEProtocol protocol;
 
-    StorageBarrelsImpl() throws RemoteException{
+    StorageBarrelsImpl(String barrelName) throws RemoteException{
         super();
         try {
+            Gateway gateway = (Gateway) Naming.lookup("rmi://localhost:32450/server");
+            gateway.barrel(barrelName, this);
+            System.out.println("Barrel " + barrelName + " sent a connection to server");
+            gateway.registerForCallback(barrelName, this);
+
             protocol = new SEProtocol();
             startListening();
         } catch (Exception e){
@@ -26,23 +29,10 @@ public class StorageBarrelsImpl extends UnicastRemoteObject implements StorageBa
     }
 
     private void startListening(){
-        Thread listenerThread = new Thread(new MessageListener());
+        listenerThread = new Thread(new MessageListener());
         listenerThread.start();
     }
 
-    private class MessageListener implements Runnable{
-        public void run(){
-            try {
-                while (true){
-                    String message = protocol.receiveMessage();
-                    System.out.println("Recived message: " + message);
-                }
-            } catch (Exception e){
-                System.out.println("Error while listening for multicast messages: " + e);
-                e.printStackTrace();
-            }
-        }
-    }
 
     public void printOnBarrel(String s) throws RemoteException{
         System.out.println("> " +  s);
@@ -60,28 +50,5 @@ public class StorageBarrelsImpl extends UnicastRemoteObject implements StorageBa
 
     public void notifyNewDataAvailable(String barrelName, String message) throws RemoteException {
         System.out.println("Notificação recebida para " + barrelName + ": " + message);
-    }
-
-    public static void main(String args[]){
-        String a;
-
-        try(Scanner sc = new Scanner(System.in)){
-
-            Gateway gateway = (Gateway) Naming.lookup("rmi://localhost:32450/server");
-            StorageBarrelsImpl storageBarrelsImpl = new StorageBarrelsImpl();
-            gateway.barrel(args[0], storageBarrelsImpl);
-            System.out.println("Barrel " + args[0] + " sent a connection to server");
-            gateway.registerForCallback(args[0], storageBarrelsImpl);
-
-            while (true){
-                System.out.println("> ");
-                a = sc.nextLine();
-                gateway.printOnServer(a);
-            }
-
-        }
-        catch (Exception e){
-            System.out.println("Exception in main Barrels: " + e);
-        }
     }
 }
