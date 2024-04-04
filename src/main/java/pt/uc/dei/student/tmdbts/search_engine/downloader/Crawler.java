@@ -34,6 +34,8 @@ public class Crawler extends UnicastRemoteObject {
                 if (activeDownloaders.size() >= 5) { /* TODO: Magic number */
                     wait();
 
+                    activeDownloaders.removeIf(thread -> !thread.isAlive());
+
                     continue;
                 }
 

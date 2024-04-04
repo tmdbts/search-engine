@@ -2,6 +2,7 @@ package pt.uc.dei.student.tmdbts.search_engine.downloader;
 
 import org.jsoup.nodes.Element;
 import pt.uc.dei.student.tmdbts.search_engine.URL;
+import pt.uc.dei.student.tmdbts.search_engine.protocol.SEProtocol;
 
 import java.util.List;
 import java.util.logging.Logger;
@@ -11,13 +12,11 @@ public class Downloader implements Runnable {
 
     private final String url;
 
-    private final String multicastAddress = "";
+    private SEProtocol protocol;
 
-    public Downloader(String url) {
+    public Downloader(String url, SEProtocol protocol) {
         this.url = url;
-//        TODO: Initialise multicast address
-        String MULTICAST_ADDRESS = "224.3.2.1";
-        int PORT = 4321;
+        this.protocol = protocol;
     }
 
     public Downloader(URL url) {
@@ -35,11 +34,11 @@ public class Downloader implements Runnable {
         LOGGER.info("Starting download of " + this.url);
 
         List<URL> urls = getURLs(this.url);
-//        TODO: send found URLs to URLQueue
+        // TODO: send found URLs to URLQueue
 
-//        TODO: get words
+        // TODO: get words
 
-//        TODO: send data to inverted index
+        // TODO: send data to inverted index
 
         notify();
     }
