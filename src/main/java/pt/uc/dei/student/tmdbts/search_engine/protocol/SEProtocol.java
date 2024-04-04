@@ -2,19 +2,32 @@ package pt.uc.dei.student.tmdbts.search_engine.protocol;
 
 import java.net.DatagramPacket;
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.MulticastSocket;
-import java.util.HashMap;
 
 public class SEProtocol {
-    private final String GROUP_ADDRESS = "127.0.0.1";
+    private final String GROUP_IP_ADDRESS = "224.0.0.69";
 
     private final int PORT = 42069;
 
-    private HashMap<Integer, String> cache = new HashMap<>();
+    private MulticastSocket socket;
+
+    private InetAddress group;
+
+    public SEProtocol() {
+        try {
+            this.socket = new MulticastSocket(PORT);
+            this.group = InetAddress.getByName(GROUP_IP_ADDRESS);
+
+            InetSocketAddress groupAddress = new InetSocketAddress(GROUP_IP_ADDRESS, PORT);
+
+            socket.joinGroup(groupAddress, socket.getNetworkInterface());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     public void sendMessage(String message) throws Exception {
-        MulticastSocket socket = new MulticastSocket();
-        InetAddress group = InetAddress.getByName(GROUP_ADDRESS);
         byte[] sendData = message.getBytes();
 
         DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, group, PORT);
@@ -26,13 +39,8 @@ public class SEProtocol {
     }
 
     public String receiveMessage() throws Exception {
-        MulticastSocket socket = new MulticastSocket(PORT);
-        InetAddress group = InetAddress.getByName(GROUP_ADDRESS);
-
         byte[] receiveData = new byte[1024];
         DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
-
-        socket.joinGroup(receivePacket.getSocketAddress(), socket.getNetworkInterface());
 
         socket.receive(receivePacket);
 
@@ -42,5 +50,9 @@ public class SEProtocol {
         socket.close();
 
         return message;
+    }
+
+    private void closeSocket() {
+        socket.close();
     }
 }
