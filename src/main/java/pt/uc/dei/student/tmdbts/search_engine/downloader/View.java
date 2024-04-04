@@ -1,7 +1,7 @@
 package pt.uc.dei.student.tmdbts.search_engine.downloader;
 
-import pt.uc.dei.student.tmdbts.search_engine.URL;
-
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Scanner;
 
 /**
@@ -24,7 +24,11 @@ public class View {
             }
 
             if (!isURL(url)) {
-                URL urlObject = new URL(url);
+                try {
+                    URI urlObject = new URI(url);
+                } catch (URISyntaxException e) {
+                    System.out.println("Invalid URL");
+                }
 //                TODO: search for the terms in the inverted index
 
                 continue;

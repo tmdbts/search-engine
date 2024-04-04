@@ -1,6 +1,5 @@
 package pt.uc.dei.student.tmdbts.search_engine.gateway;
 
-import pt.uc.dei.student.tmdbts.search_engine.URL;
 import pt.uc.dei.student.tmdbts.search_engine.storage_barrels.StorageBarrels;
 
 import java.net.MalformedURLException;
@@ -12,8 +11,8 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
-public class GatewayImpl extends UnicastRemoteObject implements Gateway{
-    private ConcurrentLinkedDeque<URL> queue = new ConcurrentLinkedDeque<>();
+public class GatewayImpl extends UnicastRemoteObject implements Gateway {
+    private ConcurrentLinkedDeque<URI> queue = new ConcurrentLinkedDeque<>();
     static HashMap<String, StorageBarrels> barrels = new HashMap<>();
     private final HashMap<String, GatewayCallback> callbacks = new HashMap<>();
 
@@ -44,7 +43,7 @@ public class GatewayImpl extends UnicastRemoteObject implements Gateway{
         barrels.put(barrelName, barrel);
     }
 
-    public void addURL(URL url) {
+    public void addURL(URI url) {
         try {
             queue.add(url);
         } catch (Exception e){
@@ -52,10 +51,12 @@ public class GatewayImpl extends UnicastRemoteObject implements Gateway{
         }
     }
 
-   /*public void addURL(List<URL> urls) { queue.addAll(urls); }*/
+    public void addURL(List<URI> urls) {
+        queue.addAll(urls);
+    }
 
-    public URL getURL() {
-        return queue.pop();
+    public URI getURL() {
+        return queue.pollFirst();
     }
 
     public boolean isEmpty() {
@@ -67,7 +68,7 @@ public class GatewayImpl extends UnicastRemoteObject implements Gateway{
     }
 
     public void printQueue() {
-        for (URL url : queue) {
+        for (URI url : queue) {
             System.out.println(url);
         }
     }

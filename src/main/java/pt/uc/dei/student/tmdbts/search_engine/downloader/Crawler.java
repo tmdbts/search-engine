@@ -1,9 +1,9 @@
 package pt.uc.dei.student.tmdbts.search_engine.downloader;
 
-import pt.uc.dei.student.tmdbts.search_engine.URL;
 import pt.uc.dei.student.tmdbts.search_engine.gateway.Gateway;
 
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
@@ -39,7 +39,7 @@ public class Crawler extends UnicastRemoteObject {
                     continue;
                 }
 
-                URL url = Gateway.getURL();
+                URI url = gateway.getURL();
 
                 Downloader downloader = new Downloader(url);
                 Thread thread = new Thread(downloader);

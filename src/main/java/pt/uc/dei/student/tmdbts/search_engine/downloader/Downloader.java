@@ -1,9 +1,11 @@
 package pt.uc.dei.student.tmdbts.search_engine.downloader;
 
 import org.jsoup.nodes.Element;
-import pt.uc.dei.student.tmdbts.search_engine.URL;
+import pt.uc.dei.student.tmdbts.search_engine.protocol.Message;
+import pt.uc.dei.student.tmdbts.search_engine.protocol.RequestTypes;
 import pt.uc.dei.student.tmdbts.search_engine.protocol.SEProtocol;
 
+import java.net.URI;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -19,21 +21,27 @@ public class Downloader implements Runnable {
         this.protocol = protocol;
     }
 
-    public Downloader(URL url) {
-        this.url = url.getFullURL();
-    }
-
-    private List<URL> getURLs(String url) {
+    private List<URI> getURLs(String url) {
         List<Element> fetchedUrls = HtmlParser.getURLs(url);
 
-        return URL.parse(fetchedUrls);
+        List<URI> urls = new ArrayList<>();
+
+        for (Element element : fetchedUrls) {
+            try {
+                urls.add(new URI(element.attr("href")));
+            } catch (Exception e) {
+                LOGGER.warning("Error parsing URL: " + e);
+            }
+        }
+
+        return urls;
     }
 
     @Override
     public void run() {
         LOGGER.info("Starting download of " + this.url);
 
-        List<URL> urls = getURLs(this.url);
+        List<URI> urls = getURLs(this.url);
         // TODO: send found URLs to URLQueue
 
         // TODO: get words
