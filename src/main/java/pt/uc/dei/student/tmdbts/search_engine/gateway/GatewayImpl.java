@@ -58,7 +58,6 @@ public class GatewayImpl extends UnicastRemoteObject implements Gateway{
         return mockResult;
     }
 
-
     public static void main(String args[]){
         String a;
         int rmiPort = 32450;

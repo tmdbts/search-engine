@@ -25,14 +25,14 @@ public class Message {
     }
 
     public void parseMessage(String messageBody) {
-        HashMap<String, String> messageMap = new HashMap<>();
+        HashMap<String, String> messageMap = new HashMap<>(); //type | word_list; source_url | <url>; item_0_name | <word>; item_1_name | <word>
 
-        String[] splitMessage = messageBody.split(";");
+        String[] splitMessage = messageBody.split(";"); // type | word_list
 
         for (String field : splitMessage) {
             String[] keyValuePair = field.split("\\|");
 
-            messageMap.put(keyValuePair[0].trim(), keyValuePair[1].trim());
+            messageMap.put(keyValuePair[0].trim(), keyValuePair[1].trim()); // <type, word_list>
         }
 
         System.out.println("List: " + containsList(messageMap));
