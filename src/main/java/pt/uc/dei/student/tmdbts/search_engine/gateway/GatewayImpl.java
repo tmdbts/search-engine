@@ -74,6 +74,7 @@ public class GatewayImpl extends UnicastRemoteObject implements Gateway{
 
     public String search(String query) throws RemoteException {
         System.out.println("Search requested for query: " + query);
+
         String mockResult = "Resultados para '" + query + "': [resultado1, resultado2]";
         return mockResult;
     }

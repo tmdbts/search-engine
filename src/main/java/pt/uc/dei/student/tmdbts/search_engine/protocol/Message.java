@@ -20,6 +20,10 @@ public class Message {
         this.body = body;
     }
 
+    public HashMap<String, String> getBodyMap() {
+        return bodyMap;
+    }
+
     public void parseMessage(String messageBody) {
         HashMap<String, String> messageMap = new HashMap<>();
 
