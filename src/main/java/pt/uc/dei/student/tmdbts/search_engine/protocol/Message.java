@@ -80,7 +80,7 @@ public class Message {
 
         StringBuilder message = new StringBuilder();
 
-        message.append("type | ").append(type).append(" ; ");
+        message.append("type | ").append(type.getTypeString()).append(" ; ");
 
         for (String key : bodyMap.keySet()) {
             message.append(key).append(" | ").append(bodyMap.get(key)).append(" ; ");
@@ -91,8 +91,6 @@ public class Message {
         }
 
         message.append('\n');
-
-        System.out.println("Encoded message: " + message.toString());
 
         return message.toString();
     }

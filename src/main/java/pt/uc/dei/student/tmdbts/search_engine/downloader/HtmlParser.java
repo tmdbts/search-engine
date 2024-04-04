@@ -32,15 +32,14 @@ public class HtmlParser {
         return urls;
     }
 
-    public static List<String> getWords(String url) {
-        List<String> words = new ArrayList<>();
+    public static ArrayList<String> getWords(String url) {
+        ArrayList<String> words = new ArrayList<>();
 
         try {
             Document document = Jsoup.connect(url).get();
             StringTokenizer tokenizer = new StringTokenizer(document.text());
-            int numberOfTokens = 0;
 
-            while (tokenizer.hasMoreElements() && numberOfTokens++ < 100) {
+            while (tokenizer.hasMoreElements()) {
                 words.add(tokenizer.nextToken().toLowerCase());
             }
         } catch (IOException e) {

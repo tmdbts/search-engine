@@ -39,7 +39,7 @@ public class Crawler {
 
                 URI url = gateway.getURL();
 
-                Downloader downloader = new Downloader(url);
+                Downloader downloader = new Downloader(url, gateway);
                 Thread thread = new Thread(downloader);
 
                 thread.start();
