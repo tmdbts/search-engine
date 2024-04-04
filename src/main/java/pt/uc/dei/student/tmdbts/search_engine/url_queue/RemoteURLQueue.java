@@ -1,7 +1,6 @@
 package pt.uc.dei.student.tmdbts.search_engine.url_queue;
 
-import pt.uc.dei.student.tmdbts.search_engine.URL;
-
+import java.net.URI;
 import java.rmi.Remote;
 import java.util.List;
 
@@ -9,11 +8,11 @@ import java.util.List;
  * URLQueue
  */
 public interface RemoteURLQueue extends Remote {
-    void addURL(URL url);
+    void addURL(URI url);
 
-    void addURL(List<URL> urls);
+    void addURL(List<URI> urls);
 
-    URL getURL();
+    URI getURL();
 
     boolean isEmpty();
 

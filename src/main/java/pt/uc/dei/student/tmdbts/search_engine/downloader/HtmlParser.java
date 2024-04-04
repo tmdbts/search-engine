@@ -22,13 +22,6 @@ public class HtmlParser {
 
         try {
             Document document = Jsoup.connect(url).get();
-            StringTokenizer tokenizer = new StringTokenizer(document.text());
-            int numberOfTokens = 0;
-
-            while (tokenizer.hasMoreElements() && numberOfTokens++ < 100) {
-                System.out.println(tokenizer.nextToken().toLowerCase());
-            }
-
             Elements links = document.select("a[href]");
 
             urls.addAll(links);

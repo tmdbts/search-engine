@@ -1,22 +1,21 @@
 package pt.uc.dei.student.tmdbts.search_engine.url_queue;
 
-import pt.uc.dei.student.tmdbts.search_engine.URL;
-
+import java.net.URI;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
 public class URLQueue implements RemoteURLQueue {
-    private ConcurrentLinkedDeque<URL> queue = new ConcurrentLinkedDeque<>();
+    private ConcurrentLinkedDeque<URI> queue = new ConcurrentLinkedDeque<>();
 
-    public void addURL(URL url) {
+    public void addURL(URI url) {
         queue.add(url);
     }
 
-    public void addURL(List<URL> urls) {
+    public void addURL(List<URI> urls) {
         queue.addAll(urls);
     }
 
-    public URL getURL() {
+    public URI getURL() {
         return queue.pop();
     }
 
@@ -32,8 +31,8 @@ public class URLQueue implements RemoteURLQueue {
 
     @Override
     public void printQueue() {
-        for (URL url : queue) {
-            System.out.println(url);
+        for (URI url : queue) {
+            System.out.println(url.toString());
         }
     }
 }
