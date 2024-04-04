@@ -1,12 +1,15 @@
 package pt.uc.dei.student.tmdbts.search_engine.downloader;
 
 import org.jsoup.nodes.Element;
+import pt.uc.dei.student.tmdbts.search_engine.gateway.Gateway;
 import pt.uc.dei.student.tmdbts.search_engine.protocol.Message;
 import pt.uc.dei.student.tmdbts.search_engine.protocol.RequestTypes;
 import pt.uc.dei.student.tmdbts.search_engine.protocol.SEProtocol;
 
 import java.net.URI;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -17,13 +20,17 @@ public class Downloader implements Runnable {
 
     private SEProtocol protocol;
 
-    public Downloader(URI url) {
+    private Gateway gateway;
+
+    public Downloader(URI url, Gateway gateway) {
         this.url = url.toString();
+        this.gateway = gateway;
         this.protocol = new SEProtocol();
     }
 
-    public Downloader(String url, SEProtocol protocol) {
+    public Downloader(String url, Gateway gateway, SEProtocol protocol) {
         this.url = url;
+        this.gateway = gateway;
         this.protocol = protocol;
     }
 
@@ -43,6 +50,19 @@ public class Downloader implements Runnable {
         return urls;
     }
 
+    private String generateIndexMessage(ArrayList<String> words) {
+
+        HashMap<String, String> bodyMap = new HashMap<>();
+        bodyMap.put("url", url);
+
+        Message message = new Message();
+        message.setType(RequestTypes.WORD_LIST);
+        message.setList(words);
+        message.setListName("word");
+
+        return message.encode();
+    }
+
     @Override
     public void run() {
         LOGGER.info("Starting download of " + this.url);
@@ -51,27 +71,19 @@ public class Downloader implements Runnable {
 
         System.out.println("Found " + urls.size() + " URLs");
 
-        ArrayList<String> words = new ArrayList<>();
-        words.add("word1");
-        words.add("word2");
-
-        Message message = new Message();
-        message.setType(RequestTypes.WORD_LIST);
-        message.setList(words);
-        message.setListName("words");
-
-        // TODO: send found URLs to URLQueue
-
-        // TODO: get words
-
-        // TODO: send data to inverted index
         try {
-            protocol.sendMessage(message.encode());
+            gateway.addURL(urls);
+        } catch (RemoteException e) {
+            System.out.println("Error adding URLs to queue: " + e);
+        }
+
+        ArrayList<String> words = HtmlParser.getWords(this.url);
+
+        try {
+            protocol.sendMessage(generateIndexMessage(words));
         } catch (Exception e) {
             System.out.println("Error encoding message: " + e);
         }
-
-//        notify();
     }
 
     /**
