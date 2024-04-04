@@ -10,7 +10,10 @@ import java.rmi.server.UnicastRemoteObject;
 
 public class StorageBarrelsImpl extends UnicastRemoteObject implements StorageBarrels, GatewayCallback {
     private Thread listenerThread;
+    private MessageListener messageListener;
     private SEProtocol protocol;
+    private Index index;
+    private String message;
 
     StorageBarrelsImpl(String barrelName) throws RemoteException{
         super();
@@ -29,10 +32,13 @@ public class StorageBarrelsImpl extends UnicastRemoteObject implements StorageBa
     }
 
     private void startListening(){
-        listenerThread = new Thread(new MessageListener());
+        listenerThread = new Thread(new MessageListener(protocol, this));
         listenerThread.start();
     }
 
+    void sendMessage(String message){
+        index.handleMessage(message);
+    }
 
     public void printOnBarrel(String s) throws RemoteException{
         System.out.println("> " +  s);

@@ -20,10 +20,6 @@ public class Message {
         this.body = body;
     }
 
-    public HashMap<String, String> getBodyMap() {
-        return bodyMap;
-    }
-
     public void parseMessage(String messageBody) {
         HashMap<String, String> messageMap = new HashMap<>();
 
@@ -174,7 +170,19 @@ public class Message {
         System.out.println(list);
     }
 
-    public String getBody() {
-        return body;
+    public int getListLength() {
+        return listLength;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public ArrayList<String> getList() {
+        return list;
+    }
+
+    public HashMap<String, String> getBodyMap() {
+        return bodyMap;
     }
 }
