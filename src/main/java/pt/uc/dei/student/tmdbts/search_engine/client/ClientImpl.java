@@ -8,9 +8,9 @@ import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.Scanner;
 
-public class ClientImpl extends UnicastRemoteObject{
+public class ClientImpl extends UnicastRemoteObject {
 
-    ClientImpl() throws RemoteException{
+    ClientImpl() throws RemoteException {
         super();
     }
 
@@ -18,7 +18,7 @@ public class ClientImpl extends UnicastRemoteObject{
         try (Scanner sc = new Scanner(System.in)) {
             Gateway gateway = (Gateway) Naming.lookup("rmi://localhost:32450/server");
 
-            while (true){
+            while (true) {
                 System.out.print("Welcome to Search Engine!\nEnter your query or URL to index -> ");
                 String query = sc.nextLine();
                 if (query.startsWith("https://")) {
