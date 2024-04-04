@@ -2,9 +2,10 @@ package pt.uc.dei.student.tmdbts.search_engine.protocol;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class Message {
-    private String type;
+    private RequestTypes type;
 
     private String body;
 
@@ -16,12 +17,11 @@ public class Message {
 
     private String listName;
 
-    public Message(String body) {
-        this.body = body;
+    public Message() {
     }
 
-    public HashMap<String, String> getBodyMap() {
-        return bodyMap;
+    public Message(String body) {
+        this.body = body;
     }
 
     public void parseMessage(String messageBody) {
@@ -37,8 +37,9 @@ public class Message {
 
         System.out.println("List: " + containsList(messageMap));
 
-        fidListProperties(messageMap);
+        bodyMap = messageMap;
 
+        fidListProperties(messageMap);
         parseList(messageMap);
     }
 
@@ -74,7 +75,7 @@ public class Message {
         }
 
         if (bodyMap.isEmpty()) {
-            throw new IllegalStateException("The body of the message is empty.");
+            encodeList(list, listName);
         }
 
         StringBuilder message = new StringBuilder();
@@ -91,13 +92,31 @@ public class Message {
 
         message.append('\n');
 
+        System.out.println("Encoded message: " + message.toString());
+
         return message.toString();
     }
 
-    private static String encodeList(ArrayList<String> list, String listName) {
+    public static String encode(RequestTypes type, List<String> list, String listName) {
+        int listLength = list.size();
         StringBuilder message = new StringBuilder();
 
-        message.append(listName).append("_count | ").append(list.size()).append(" ; ");
+        message.append("type | ").append(type.getTypeString()).append(" ; ");
+        message.append(listName).append("_count | ").append(listLength).append(" ; ");
+
+        for (int i = 0; i < list.size(); i++) {
+            message.append(listName).append("_").append(i).append(" | ").append(list.get(i)).append(" ; ");
+        }
+
+        return message.toString();
+    }
+
+
+    private static String encodeList(ArrayList<String> list, String listName) {
+        int listLength = list.size();
+        StringBuilder message = new StringBuilder();
+
+        message.append(listName).append("_count | ").append(listLength).append(" ; ");
 
         for (int i = 0; i < list.size(); i++) {
             message.append(listName).append("_").append(i).append("_name | ").append(list.get(i)).append(" ; ");
@@ -117,12 +136,14 @@ public class Message {
     }
 
     /**
-     * Find the list properties
+     * Find the list length and name properties
      *
      * @param messageMap the message map
      * @return true if the list properties were found, false otherwise
      */
     private boolean fidListProperties(HashMap<String, String> messageMap) {
+        if (!containsList(messageMap)) return false;
+
         for (String key : messageMap.keySet()) {
             if (key.contains("count")) {
                 listLength = Integer.parseInt(messageMap.get(key));
@@ -174,7 +195,51 @@ public class Message {
         System.out.println(list);
     }
 
+    public RequestTypes getType() {
+        return type;
+    }
+
+    public void setType(RequestTypes type) {
+        this.type = type;
+    }
+
     public String getBody() {
         return body;
+    }
+
+    public void setBody(String body) {
+        this.body = body;
+    }
+
+    public HashMap<String, String> getBodyMap() {
+        return bodyMap;
+    }
+
+    public void setBodyMap(HashMap<String, String> bodyMap) {
+        this.bodyMap = bodyMap;
+    }
+
+    public ArrayList<String> getList() {
+        return list;
+    }
+
+    public void setList(ArrayList<String> list) {
+        this.list = list;
+    }
+
+    public int getListLength() {
+        return listLength;
+    }
+
+    public void setListLength(int listLength) {
+        this.listLength = listLength;
+    }
+
+    public String getListName() {
+        return listName;
+    }
+
+    public void setListName(String listName) {
+        this.listName = listName;
     }
 }
