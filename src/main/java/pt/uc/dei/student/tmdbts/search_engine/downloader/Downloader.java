@@ -41,7 +41,12 @@ public class Downloader implements Runnable {
 
         for (Element element : fetchedUrls) {
             try {
-                urls.add(new URI(element.attr("href")));
+                URI uri = new URI(element.attr("href"));
+                if (!uri.isAbsolute()) {
+                    continue;
+                }
+
+                urls.add(uri);
             } catch (Exception e) {
                 LOGGER.warning("Error parsing URL: " + e);
             }
@@ -51,7 +56,6 @@ public class Downloader implements Runnable {
     }
 
     private String generateIndexMessage(ArrayList<String> words) {
-
         HashMap<String, String> bodyMap = new HashMap<>();
         bodyMap.put("url", url);
 
