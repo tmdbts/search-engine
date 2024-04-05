@@ -32,8 +32,7 @@ public class ClientImpl extends UnicastRemoteObject {
             }
 
         } catch (Exception e) {
-            System.out.println("Exception in main Client: " + e);
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         }
     }
 }

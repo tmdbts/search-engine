@@ -59,7 +59,7 @@ public class Message {
 
         StringBuilder message = new StringBuilder();
 
-        message.append("type | ").append(type).append(" ; ");
+        message.append("type | ").append(type.getTypeString()).append(" ; ");
 
         for (String key : messageMap.keySet()) {
             message.append(key).append(" | ").append(messageMap.get(key)).append(" ; ");
@@ -146,7 +146,8 @@ public class Message {
 
                 return true;
             }
-            if (key.contains("type")){
+
+            if (key.contains("type")) {
                 type = RequestTypes.fromString(messageMap.get(key));
             }
         }
