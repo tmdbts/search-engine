@@ -127,6 +127,7 @@ public class Message {
 
         return message.toString();
     }
+
     /**
      * Find the list length and name properties
      *
