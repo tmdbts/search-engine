@@ -82,6 +82,8 @@ public class Downloader implements Runnable {
             protocol.sendMessage(generateIndexMessage(words));
         } catch (Exception e) {
             System.out.println("Error encoding message: " + e);
+        } finally {
+            protocol.closeSocket();
         }
     }
 

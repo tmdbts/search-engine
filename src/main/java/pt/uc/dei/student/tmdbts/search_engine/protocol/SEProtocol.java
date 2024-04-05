@@ -34,8 +34,6 @@ public class SEProtocol {
         socket.send(sendPacket);
 
         System.out.println("Message sent to multicast group: " + message);
-
-        socket.close();
     }
 
     public String receiveMessage() throws Exception {
@@ -50,7 +48,7 @@ public class SEProtocol {
         return message;
     }
 
-    private void closeSocket() {
+    public void closeSocket() {
         socket.close();
     }
 }
