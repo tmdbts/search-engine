@@ -18,6 +18,7 @@ public class StorageBarrelsImpl extends UnicastRemoteObject implements StorageBa
     StorageBarrelsImpl(String barrelName) throws RemoteException{
         super();
         try {
+            this.index = new Index();
             Gateway gateway = (Gateway) Naming.lookup("rmi://localhost:32450/server");
             gateway.barrel(barrelName, this);
             System.out.println("Barrel " + barrelName + " sent a connection to server");
@@ -42,10 +43,6 @@ public class StorageBarrelsImpl extends UnicastRemoteObject implements StorageBa
 
     public void printOnBarrel(String s) throws RemoteException{
         System.out.println("> " +  s);
-    }
-
-    public void writeOnFile() throws RemoteException{
-
     }
 
     @Override

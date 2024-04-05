@@ -1,6 +1,7 @@
 package pt.uc.dei.student.tmdbts.search_engine.protocol;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -30,7 +31,11 @@ public class Message {
         String[] splitMessage = messageBody.split(";");
 
         for (String field : splitMessage) {
+            if (field.isBlank()) continue;
+
             String[] keyValuePair = field.split("\\|");
+
+            System.out.println(Arrays.toString(keyValuePair));
 
             messageMap.put(keyValuePair[0].trim(), keyValuePair[1].trim());
         }
@@ -122,17 +127,6 @@ public class Message {
 
         return message.toString();
     }
-
-    private String findType(HashMap<String, String> messageMap) {
-        for (String key : messageMap.keySet()) {
-            if (key.startsWith("type")) {
-                return messageMap.get(key);
-            }
-        }
-
-        return null;
-    }
-
     /**
      * Find the list length and name properties
      *
@@ -150,6 +144,9 @@ public class Message {
                 list = new ArrayList<>();
 
                 return true;
+            }
+            if (key.contains("type")){
+                type = RequestTypes.fromString(messageMap.get(key));
             }
         }
 

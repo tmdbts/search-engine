@@ -47,8 +47,6 @@ public class SEProtocol {
         String message = new String(receivePacket.getData(), 0, receivePacket.getLength());
         System.out.println("Message received from multicast group: " + message);
 
-        socket.close();
-
         return message;
     }
 
