@@ -6,7 +6,9 @@ import pt.uc.dei.student.tmdbts.search_engine.protocol.RequestTypes;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 public class Index {
     private ArrayList<String> namesList;
@@ -49,8 +51,6 @@ public class Index {
                     currentURL.add(current);
                     index.put(item, currentURL);
                 }
-
-
 
                 Path path = Path.of("./index.txt");
 

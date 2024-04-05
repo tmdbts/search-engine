@@ -35,7 +35,7 @@ public class Message {
 
             String[] keyValuePair = field.split("\\|");
 
-            System.out.println("Here " + Arrays.toString(keyValuePair));
+            System.out.println(Arrays.toString(keyValuePair));
 
             messageMap.put(keyValuePair[0].trim(), keyValuePair[1].trim());
         }
@@ -43,8 +43,6 @@ public class Message {
         System.out.println("List: " + containsList(messageMap));
 
         bodyMap = messageMap;
-
-        //System.out.println("Aqui " + bodyMap);
 
         fidListProperties(messageMap);
         parseList(messageMap);

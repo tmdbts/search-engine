@@ -41,8 +41,8 @@ public class StorageBarrelsImpl extends UnicastRemoteObject implements StorageBa
         index.handleMessage(message);
     }
 
-    public void printOnBarrel(String s) throws RemoteException {
-        System.out.println("> " + s);
+    public void printOnBarrel(String s) throws RemoteException{
+        System.out.println("> " +  s);
     }
 
     @Override
