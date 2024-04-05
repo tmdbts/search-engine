@@ -14,7 +14,12 @@ public abstract class FileWriter {
 
         try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(filePath))){
                 for (Map.Entry<String, URI> entry : index.entrySet()){
-                    writer.write(String.format("%s|%s", entry.getKey(), entry.getValue().toString()));
+                    StringBuilder stringBuilder = new StringBuilder();
+                    stringBuilder.append(entry.getKey());
+
+                    stringBuilder.append(entry);
+                    writer.write(String.format("%s| ", entry.getKey()));
+                    writer.write(String.format("%s, "), entry.getValue().toString());
             }
         } catch (IOException e){
             System.err.println("Error writing to file: " + e.getMessage());

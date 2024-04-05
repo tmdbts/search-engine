@@ -55,12 +55,7 @@ public class Downloader implements Runnable {
         HashMap<String, String> bodyMap = new HashMap<>();
         bodyMap.put("url", url);
 
-        Message message = new Message();
-        message.setType(RequestTypes.WORD_LIST);
-        message.setList(words);
-        message.setListName("word");
-
-        return message.encode();
+        return Message.encode(bodyMap, RequestTypes.WORD_LIST, "word", words);
     }
 
     @Override

@@ -16,4 +16,14 @@ public enum RequestTypes {
     public String getTypeString() {
         return typeString;
     }
+
+    public static RequestTypes fromString(String text) {
+        for (RequestTypes reqType : RequestTypes.values()) {
+            if (reqType.typeString.equalsIgnoreCase(text)) {
+                return reqType;
+            }
+        }
+        return null;
+    }
+
 }

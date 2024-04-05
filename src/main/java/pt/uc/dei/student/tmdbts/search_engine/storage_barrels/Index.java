@@ -1,25 +1,26 @@
 package pt.uc.dei.student.tmdbts.search_engine.storage_barrels;
 
-import pt.uc.dei.student.tmdbts.search_engine.URL;
 import pt.uc.dei.student.tmdbts.search_engine.protocol.Message;
+import pt.uc.dei.student.tmdbts.search_engine.protocol.RequestTypes;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.SplittableRandom;
 
 public class Index {
     private ArrayList<String> namesList;
-    private HashMap<String, URI> index = new HashMap<>();
+    private HashMap<String, List<URI>> index = new HashMap<>();
     private HashMap<URI, List<String>> meta = new HashMap<>();
     private Message message;
-    public HashMap<String, URI> getIndex() {
+
+    public HashMap<String, List<URI>> getIndex() {
         return index;
     }
 
-    public void setIndex(HashMap<String, URI> index) {
+    public void setIndex(HashMap<String, List<URI>> index) {
         this.index = index;
     }
 
@@ -33,9 +34,10 @@ public class Index {
 
     public void handleMessage(String inComingMessage) {
         message = new Message(inComingMessage);
+        message.parseMessage(inComingMessage);
         namesList = message.getList();
 
-        if (message.getType().equals("word_list")) {
+        if (message.getType().equals(RequestTypes.WORD_LIST)) {
             for (String item : message.getList()) {
                 try {
                     URI uri = new URI(message.getBodyMap().get("url"));
@@ -45,7 +47,9 @@ public class Index {
                 }
             }
 
-            FileWriter.writeData(index, "index.txt");
+            Path path = Path.of("./index.txt");
+
+            FileWriter.writeData(index, path.toString());
 
         }
     }
