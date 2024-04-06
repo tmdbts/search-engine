@@ -4,16 +4,17 @@ import pt.uc.dei.student.tmdbts.search_engine.protocol.Message;
 import pt.uc.dei.student.tmdbts.search_engine.protocol.RequestTypes;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 public class Index {
     private ArrayList<String> namesList;
     private HashMap<String, ArrayList<URI>> index = new HashMap<>();
     private HashMap<URI, List<String>> meta = new HashMap<>();
+
     private Message message;
 
     public HashMap<String, ArrayList<URI>> getIndex() {
@@ -54,8 +55,22 @@ public class Index {
 
                 Path path = Path.of("./index.txt");
 
-                FileWriter.writeData(index, path.toString());
+                FileReadWriter.writeData(index, path.toString());
             }
         }
     }
+
+    public HashMap<String, ArrayList<URI>> handleQuery (String query){
+        String[] splitedQuery = query.split(" ");
+
+        HashMap<String, ArrayList<URI>> results = new HashMap<>();
+        for (String word : splitedQuery){
+            if (index.containsKey(word)){
+                results.put(word, index.get(word));
+            }
+        }
+
+        return results;
+    }
+
 }

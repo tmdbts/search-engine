@@ -8,6 +8,7 @@ import java.rmi.Naming;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
@@ -17,6 +18,7 @@ public class GatewayImpl extends UnicastRemoteObject implements Gateway {
     private ConcurrentLinkedDeque<URI> queue = new ConcurrentLinkedDeque<>();
     static HashMap<String, StorageBarrels> barrels = new HashMap<>();
     private final HashMap<String, GatewayCallback> callbacks = new HashMap<>();
+    private static StorageBarrels storageBarrels;
 
     public GatewayImpl() throws RemoteException {
         super();
@@ -75,11 +77,11 @@ public class GatewayImpl extends UnicastRemoteObject implements Gateway {
         }
     }
 
-    public String search(String query) throws RemoteException {
-        System.out.println("Search requested for query: " + query);
+    public HashMap<String, ArrayList<URI>> search(String query) throws RemoteException {
 
-        String mockResult = "Resultados para '" + query + "': [resultado1, resultado2]";
-        return mockResult;
+        System.out.println("Searching results for the requested query: " + query);
+
+        return barrels.get("teste").search(query);
     }
 
 

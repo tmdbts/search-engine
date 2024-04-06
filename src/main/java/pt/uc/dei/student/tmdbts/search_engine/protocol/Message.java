@@ -146,6 +146,7 @@ public class Message {
 
                 return true;
             }
+
             if (key.contains("type")){
                 type = RequestTypes.fromString(messageMap.get(key));
             }

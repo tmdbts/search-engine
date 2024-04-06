@@ -4,9 +4,15 @@ import pt.uc.dei.student.tmdbts.search_engine.gateway.Gateway;
 import pt.uc.dei.student.tmdbts.search_engine.gateway.GatewayCallback;
 import pt.uc.dei.student.tmdbts.search_engine.protocol.SEProtocol;
 
+import java.net.URI;
+import java.nio.file.Path;
 import java.rmi.Naming;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class StorageBarrelsImpl extends UnicastRemoteObject implements StorageBarrels, GatewayCallback {
     private Thread listenerThread;
@@ -25,6 +31,8 @@ public class StorageBarrelsImpl extends UnicastRemoteObject implements StorageBa
             gateway.registerForCallback(barrelName, this);
 
             protocol = new SEProtocol();
+            Path path = Path.of("./index.txt");
+            index.setIndex(FileReadWriter.readData(path.toString()));
             startListening();
         } catch (Exception e){
             System.err.println("Error initializing multicast protocol: " + e.getMessage());
@@ -46,9 +54,15 @@ public class StorageBarrelsImpl extends UnicastRemoteObject implements StorageBa
     }
 
     @Override
-    public void search(String query) throws RemoteException {
+    public HashMap<String, ArrayList<URI>> search(String query) throws RemoteException {
 
-        return;
+        HashMap<String, ArrayList<URI>> indexResults = new HashMap<>();
+
+        indexResults = index.handleQuery(query);
+
+        System.out.println("AQUI " + indexResults);
+
+        return indexResults;
     }
 
     public void notifyNewDataAvailable(String barrelName, String message) throws RemoteException {
