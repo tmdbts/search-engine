@@ -10,10 +10,7 @@ import java.rmi.Naming;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
 public class GatewayImpl extends UnicastRemoteObject implements Gateway {
@@ -86,6 +83,32 @@ public class GatewayImpl extends UnicastRemoteObject implements Gateway {
         return barrels.get("teste").search(query);
     }
 
+    public String admin() {
+        StringBuilder stringBuilder = new StringBuilder();
+
+        System.out.println("B:" + getBarrels());
+
+        stringBuilder.append(getBarrels());
+
+        try {
+            stringBuilder.append(barrels.get("test").getTopSearches());
+        } catch (RemoteException e) {
+            System.out.println("Error getting top searches: " + e.getMessage());
+        }
+
+        return stringBuilder.toString();
+    }
+
+    private String getBarrels() {
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("Active barrels:\n");
+
+        for (String key : barrels.keySet()) {
+            stringBuilder.append(key).append("\n");
+        }
+
+        return stringBuilder.toString();
+    }
 
     public static void main(String args[]) {
         String rootPath = System.getProperty("user.dir");

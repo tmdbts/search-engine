@@ -67,10 +67,7 @@ public class StorageBarrelsImpl extends UnicastRemoteObject implements StorageBa
 
     @Override
     public HashMap<String, ArrayList<URI>> search(String query) throws RemoteException {
-
-        HashMap<String, ArrayList<URI>> indexResults = new HashMap<>();
-
-        indexResults = index.handleQuery(query);
+        HashMap<String, ArrayList<URI>> indexResults = index.handleQuery(query);
 
         System.out.println("AQUI " + indexResults);
 
@@ -79,5 +76,19 @@ public class StorageBarrelsImpl extends UnicastRemoteObject implements StorageBa
 
     public void notifyNewDataAvailable(String barrelName, String message) throws RemoteException {
         System.out.println("Notificação recebida para " + barrelName + ": " + message);
+    }
+
+    /**
+     * TODO
+     * Gets the top 10 searches
+     *
+     * @return the top 10 searches
+     */
+    public String getTopSearches() {
+        StringBuilder stringBuilder = new StringBuilder();
+
+        stringBuilder.append("Top 10 searches:\n");
+
+        return stringBuilder.toString();
     }
 }

@@ -18,37 +18,36 @@ public class ClientImpl extends UnicastRemoteObject {
     }
 
     /* TODO LIST
-    *
-    *   Resultados ordenados por nº de ligacoes para cada pagina
-    *
-    *   Consultar lista de paginas com ligacoes especificas para uma pagina especifica
-    *
-    *   Agrupar resultados de pesquisa de 10 em 10
-    *
-    * */
+     *
+     *   Resultados ordenados por nº de ligacoes para cada pagina
+     *
+     *   Consultar lista de paginas com ligacoes especificas para uma pagina especifica
+     *
+     *   Agrupar resultados de pesquisa de 10 em 10
+     *
+     * */
 
 
-    public String verifyURLs(HashMap<String, ArrayList<URI>> veriifyURL){
+    public String verifyURLs(HashMap<String, ArrayList<URI>> veriifyURL) {
 
         List<URI> commonURLs = null;
 
-        for (List<URI> urls : veriifyURL.values()){
-            if (commonURLs == null){
+        for (List<URI> urls : veriifyURL.values()) {
+            if (commonURLs == null) {
                 commonURLs = new ArrayList<>(urls);
-            }
-            else {
+            } else {
                 commonURLs.retainAll(urls);
             }
         }
 
-        if (commonURLs == null || commonURLs.isEmpty()){
+        if (commonURLs == null || commonURLs.isEmpty()) {
             return "";
         }
 
         return commonURLs.stream().map(URI::toString).collect(Collectors.joining(", "));
     }
 
-    public String handleQuery(HashMap<String, ArrayList<URI>> queryResults){
+    public String handleQuery(HashMap<String, ArrayList<URI>> queryResults) {
 
         return verifyURLs(queryResults);
     }
@@ -78,15 +77,26 @@ public class ClientImpl extends UnicastRemoteObject {
                     URI url = new URI(query);
                     gateway.addURL(url);
                     System.out.println("URL requested for indexing: " + query);
+                } else if (query.equals("search://admin")) {
+                    admin(gateway);
                 } else {
                     ClientImpl client = new ClientImpl();
                     String result = client.handleQuery(gateway.search(query));
                     System.out.println("Search results: \n" + result);
                 }
             }
-
         } catch (Exception e) {
             System.out.println(e.getMessage());
+        }
+    }
+
+    private static void admin(Gateway gateway) {
+        try {
+            String info = gateway.admin();
+
+            System.out.println(info);
+        } catch (RemoteException e) {
+            System.out.println("Error getting admin info: " + e.getMessage());
         }
     }
 }
