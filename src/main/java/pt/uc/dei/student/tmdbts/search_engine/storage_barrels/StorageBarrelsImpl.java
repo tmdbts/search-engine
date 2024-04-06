@@ -11,8 +11,6 @@ import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 public class StorageBarrelsImpl extends UnicastRemoteObject implements StorageBarrels, GatewayCallback {
     private Thread listenerThread;
@@ -30,7 +28,7 @@ public class StorageBarrelsImpl extends UnicastRemoteObject implements StorageBa
             System.out.println("Barrel " + barrelName + " sent a connection to server");
             gateway.registerForCallback(barrelName, this);
 
-            protocol = new CommunicationHandler();
+            commHandler = new CommunicationHandler();
             Path path = Path.of("./index.txt");
             index.setIndex(FileReadWriter.readData(path.toString()));
 
