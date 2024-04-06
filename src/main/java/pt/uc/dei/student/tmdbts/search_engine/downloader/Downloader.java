@@ -40,8 +40,14 @@ public class Downloader implements Runnable {
         ArrayList<URI> urls = new ArrayList<>();
 
         for (Element element : fetchedUrls) {
+            String href = element.attr("href");
+
+            while (href.endsWith("/") || href.endsWith("#")) {
+                href = href.substring(0, href.length() - 1);
+            }
+
             try {
-                URI uri = new URI(element.attr("href"));
+                URI uri = new URI(href);
                 if (!uri.isAbsolute()) {
                     continue;
                 }
@@ -60,6 +66,14 @@ public class Downloader implements Runnable {
         bodyMap.put("url", url);
 
         return Message.encode(bodyMap, RequestTypes.WORD_LIST, "word", words);
+    }
+
+
+    private ArrayList<String> generateMetaMessage(ArrayList<String> head) {
+        HashMap<String, String> bodyMap = new HashMap<>();
+        bodyMap.put("url", url);
+
+        return Message.encode(bodyMap, RequestTypes.META_DATA, "meta", head);
     }
 
     private ArrayList<String> generateUrlListMessage(ArrayList<URI> urls) {
@@ -89,10 +103,12 @@ public class Downloader implements Runnable {
         }
 
         ArrayList<String> words = HtmlParser.getWords(this.url);
+        ArrayList<String> head = HtmlParser.getHead(this.url);
 
         try {
             commHandler.sendMessage(generateIndexMessage(words));
             commHandler.sendMessage(generateUrlListMessage(urls));
+            commHandler.sendMessage(generateMetaMessage(head));
         } catch (Exception e) {
             System.out.println("Error encoding message: " + e);
         } finally {

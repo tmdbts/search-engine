@@ -29,4 +29,6 @@ public interface Gateway extends Remote {
     boolean isQueueEmpty() throws RemoteException;
 
     int size() throws RemoteException;
+
+    String admin() throws RemoteException;
 }
