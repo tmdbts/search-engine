@@ -11,16 +11,18 @@ import java.nio.file.Path;
 import java.rmi.Naming;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Properties;
+import java.util.*;
 
 public class StorageBarrelsImpl extends UnicastRemoteObject implements StorageBarrels, GatewayCallback {
     private Thread listenerThread;
-    private MessageListener messageListener;
+
     private CommunicationHandler commHandler;
+
     private Index index;
-    private String message;
+
+    private HashMap<String, Integer> termSearchFrequency = new HashMap<>();
+
+    private ArrayList<String> recentSearches = new ArrayList<>();
 
     StorageBarrelsImpl(String barrelName) throws RemoteException {
         super();
