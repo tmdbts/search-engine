@@ -25,8 +25,6 @@ public class CommunicationHandler {
             InetSocketAddress groupAddress = new InetSocketAddress(GROUP_IP_ADDRESS, PORT);
 
             socket.joinGroup(groupAddress, socket.getNetworkInterface());
-
-            socket.setSoTimeout(SOCKET_TIMEOUT);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
