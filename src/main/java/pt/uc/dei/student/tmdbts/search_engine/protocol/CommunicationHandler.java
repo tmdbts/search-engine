@@ -9,6 +9,8 @@ import java.util.ArrayList;
 public class CommunicationHandler {
     private final String GROUP_IP_ADDRESS = "224.0.0.69";
 
+    private final int SOCKET_TIMEOUT = 5000;
+
     private final int PORT = 42069;
 
     private MulticastSocket socket;
@@ -23,6 +25,8 @@ public class CommunicationHandler {
             InetSocketAddress groupAddress = new InetSocketAddress(GROUP_IP_ADDRESS, PORT);
 
             socket.joinGroup(groupAddress, socket.getNetworkInterface());
+
+            socket.setSoTimeout(SOCKET_TIMEOUT);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
