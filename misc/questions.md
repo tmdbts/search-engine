@@ -1,8 +1,8 @@
 # Arquitecture
 
-> A aplicação Googol consiste em quatro programas: Downloaders, Index Storage Barrels, RMI Gateway e RMI ClientA aplicação Googol consiste em quatro programas: Downloaders, Index Storage Barrels, RMI Gateway e RMI Client
-
-Should we create a project for each program or a single project with four packages, or something alike?
+> A aplicação Googol consiste em quatro programas: Downloaders, Index Storage
+Barrels, RMI Gateway e RMI ClientA aplicação Googol consiste em quatro
+programas: Downloaders, Index Storage Barrels, RMI Gateway e RMI Client
 
 # TODO
 
