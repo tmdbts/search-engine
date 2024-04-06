@@ -3,6 +3,7 @@ package pt.uc.dei.student.tmdbts.search_engine.protocol;
 public enum RequestTypes {
     URL_LIST("url_list"),
     WORD_LIST("word_list"),
+    META_DATA("meta_data"),
     LOGIN("login"),
     STATUS("status"),
     SEARCH("search");
