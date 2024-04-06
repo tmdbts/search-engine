@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 
 public abstract class FileReadWriter {
 
-    public static void writeData(HashMap<String, ArrayList<URI>> index, String filePath) {
+    public static void writeIndexData(HashMap<String, ArrayList<URI>> index, String filePath) {
 
         try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(filePath))) {
             for (Map.Entry<String, ArrayList<URI>> entry : index.entrySet()) {
@@ -21,6 +21,19 @@ public abstract class FileReadWriter {
                 writer.write(String.format("%s | %s\n", entry.getKey(), urlist));
             }
         } catch (IOException e) {
+            System.err.println("Error writing to file: " + e.getMessage());
+        }
+    }
+
+    public static void writeUrlsData (HashMap<URI, ArrayList<URI>> urls, String filePath){
+        try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(filePath))){
+            for (Map.Entry<URI, ArrayList<URI>> entry : urls.entrySet()) {
+                String urlist = entry.getValue().stream().map(URI::toString).collect(Collectors.joining(", "));
+
+                writer.write(String.format("%s | %s\n", entry.getKey(), urlist));
+            }
+
+        } catch (IOException e){
             System.err.println("Error writing to file: " + e.getMessage());
         }
     }

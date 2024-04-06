@@ -71,8 +71,6 @@ public class StorageBarrelsImpl extends UnicastRemoteObject implements StorageBa
     public HashMap<String, ArrayList<URI>> search(String query) throws RemoteException {
         HashMap<String, ArrayList<URI>> indexResults = index.handleQuery(query);
 
-        System.out.println("AQUI " + indexResults);
-
         return indexResults;
     }
 
