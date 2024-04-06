@@ -11,6 +11,7 @@ import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class StorageBarrelsImpl extends UnicastRemoteObject implements StorageBarrels, GatewayCallback {
     private Thread listenerThread;
@@ -59,8 +60,6 @@ public class StorageBarrelsImpl extends UnicastRemoteObject implements StorageBa
         HashMap<String, ArrayList<URI>> indexResults = new HashMap<>();
 
         indexResults = index.handleQuery(query);
-
-        System.out.println("AQUI " + indexResults);
 
         return indexResults;
     }

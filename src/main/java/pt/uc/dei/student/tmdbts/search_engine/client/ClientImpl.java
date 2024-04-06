@@ -7,7 +7,6 @@ import java.rmi.Naming;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class ClientImpl extends UnicastRemoteObject {
 
@@ -25,28 +24,7 @@ public class ClientImpl extends UnicastRemoteObject {
     *
     * */
 
-
-    public String verifyURLs(HashMap<String, ArrayList<URI>> veriifyURL){
-
-        List<URI> commonURLs = null;
-
-        for (List<URI> urls : veriifyURL.values()){
-            if (commonURLs == null){
-                commonURLs = new ArrayList<>(urls);
-            }
-            else {
-                commonURLs.retainAll(urls);
-            }
-        }
-
-        if (commonURLs == null || commonURLs.isEmpty()){
-            return "";
-        }
-
-        return commonURLs.stream().map(URI::toString).collect(Collectors.joining(", "));
-    }
-
-    public String handleQuery(HashMap<String, ArrayList<URI>> queryResults){
+    public List<URI> handleQuery(HashMap<String, ArrayList<URI>> queryResults){
 
         return verifyURLs(queryResults);
     }
@@ -64,7 +42,8 @@ public class ClientImpl extends UnicastRemoteObject {
                     System.out.println("URL requested for indexing: " + query);
                 } else {
                     ClientImpl client = new ClientImpl();
-                    String result = client.handleQuery(gateway.search(query));
+                    List<URI> result = client.handleQuery(gateway.search(query));
+
                     System.out.println("Search results: \n" + result);
                 }
             }
