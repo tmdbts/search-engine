@@ -3,7 +3,6 @@ package pt.uc.dei.student.tmdbts.search_engine.protocol;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 
 public class Message {
     private RequestTypes type;
@@ -17,6 +16,8 @@ public class Message {
     private int listLength = 0;
 
     private String listName;
+
+    private static final int MAX_UDP_MESSAGE_SIZE = 1024;
 
     public Message() {
     }
@@ -40,15 +41,46 @@ public class Message {
             messageMap.put(keyValuePair[0].trim(), keyValuePair[1].trim());
         }
 
-        System.out.println("List: " + containsList(messageMap));
-
         bodyMap = messageMap;
 
-        fidListProperties(messageMap);
+        findListProperties(messageMap);
         parseList(messageMap);
     }
 
-    public static String encode(HashMap<String, String> messageMap, RequestTypes type, String listName, ArrayList<String> list) {
+    public static ArrayList<String> encode(HashMap<String, String> messageMap, RequestTypes type, String listName, ArrayList<String> list) {
+        ArrayList<String> messages = new ArrayList<>();
+        int i = 0;
+
+        while (!list.isEmpty()) {
+            StringBuilder message = initMessage(messageMap, type, listName, list.size());
+
+            while (message.length() < MAX_UDP_MESSAGE_SIZE) {
+                if (list.isEmpty()) {
+                    break;
+                }
+
+                String encodedItem = encodeListItem(list.removeFirst(), listName, i);
+
+                if (message.length() + encodedItem.length() >= MAX_UDP_MESSAGE_SIZE - 2) {
+                    message.append('\n');
+                    messages.add(message.toString());
+
+                    return messages;
+                }
+
+                message.append(encodedItem);
+                i += 1;
+            }
+
+            message.append('\n');
+
+            messages.add(message.toString());
+        }
+
+        return messages;
+    }
+
+    private static StringBuilder initMessage(HashMap<String, String> messageMap, RequestTypes type, String listName, int listLength) {
         if (messageMap.isEmpty()) {
             throw new IllegalStateException("The body of the message is empty.");
         }
@@ -60,72 +92,28 @@ public class Message {
         StringBuilder message = new StringBuilder();
 
         message.append("type | ").append(type.getTypeString()).append(" ; ");
+        message.append(listName).append("_count | ").append(listLength).append(" ; ");
 
         for (String key : messageMap.keySet()) {
             message.append(key).append(" | ").append(messageMap.get(key)).append(" ; ");
         }
 
-        if (listName != null && list != null) {
-            message.append(encodeList(list, listName));
-        }
-
-        message.append('\n');
-
-        return message.toString();
+        return message;
     }
-
-    public String encode() throws IllegalStateException {
-        if (type == null) {
-            throw new IllegalStateException("Type not set");
-        }
-
-        if (bodyMap.isEmpty()) {
-            encodeList(list, listName);
-        }
-
-        StringBuilder message = new StringBuilder();
-
-        message.append("type | ").append(type.getTypeString()).append(" ; ");
-
-        for (String key : bodyMap.keySet()) {
-            message.append(key).append(" | ").append(bodyMap.get(key)).append(" ; ");
-        }
-
-        if (listName != null && list != null) {
-            message.append(encodeList(list, listName));
-        }
-
-        message.append('\n');
-
-        return message.toString();
-    }
-
-    public static String encode(RequestTypes type, List<String> list, String listName) {
-        int listLength = list.size();
-        StringBuilder message = new StringBuilder();
-
-        message.append("type | ").append(type.getTypeString()).append(" ; ");
-        message.append(listName).append("_count | ").append(listLength).append(" ; ");
-
-        for (int i = 0; i < list.size(); i++) {
-            message.append(listName).append("_").append(i).append(" | ").append(list.get(i)).append(" ; ");
-        }
-
-        return message.toString();
-    }
-
 
     private static String encodeList(ArrayList<String> list, String listName) {
-        int listLength = list.size();
         StringBuilder message = new StringBuilder();
-
-        message.append(listName).append("_count | ").append(listLength).append(" ; ");
+        int listLength = list.size();
 
         for (int i = 0; i < list.size(); i++) {
-            message.append(listName).append("_").append(i).append("_name | ").append(list.get(i)).append(" ; ");
+            message.append(encodeListItem(list.get(i), listName, i));
         }
 
         return message.toString();
+    }
+
+    private static String encodeListItem(String item, String listName, int index) {
+        return listName + "_" + index + "_name" + " | " + item + " ; ";
     }
 
     /**
@@ -134,21 +122,21 @@ public class Message {
      * @param messageMap the message map
      * @return true if the list properties were found, false otherwise
      */
-    private boolean fidListProperties(HashMap<String, String> messageMap) {
+    private boolean findListProperties(HashMap<String, String> messageMap) {
         if (!containsList(messageMap)) return false;
 
         for (String key : messageMap.keySet()) {
             if (key.contains("count")) {
-                listLength = Integer.parseInt(messageMap.get(key));
-                listName = key.split("_")[0];
+                listLength = Integer.parseInt(messageMap.get(key).trim());
+                listName = key.split("_")[0].trim();
 
                 list = new ArrayList<>();
 
                 return true;
             }
 
-            if (key.contains("type")) {
-                type = RequestTypes.fromString(messageMap.get(key));
+            if (key.equals("type")) {
+                type = RequestTypes.fromString(messageMap.get(key).trim());
             }
         }
 
@@ -167,7 +155,7 @@ public class Message {
 
     private void parseList(HashMap<String, String> messageMap) {
         if (list == null) {
-            boolean listExists = fidListProperties(messageMap);
+            boolean listExists = findListProperties(messageMap);
 
             if (!listExists) {
                 return;

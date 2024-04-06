@@ -37,6 +37,12 @@ public class CommunicationHandler {
         System.out.println("Message sent to multicast group: " + message);
     }
 
+    public void sendMessage(ArrayList<String> messages) throws Exception {
+        for (String message : messages) {
+            sendMessage(message);
+        }
+    }
+
     public String receiveMessage() throws Exception {
         byte[] receiveData = new byte[1024];
         DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
