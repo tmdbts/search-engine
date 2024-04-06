@@ -34,10 +34,10 @@ public class Downloader implements Runnable {
         this.commHandler = commHandler;
     }
 
-    private List<URI> getURLs(String url) {
+    private ArrayList<URI> getURLs(String url) {
         List<Element> fetchedUrls = HtmlParser.getURLs(url);
 
-        List<URI> urls = new ArrayList<>();
+        ArrayList<URI> urls = new ArrayList<>();
 
         for (Element element : fetchedUrls) {
             String href = element.attr("href");
@@ -68,6 +68,7 @@ public class Downloader implements Runnable {
         return Message.encode(bodyMap, RequestTypes.WORD_LIST, "word", words);
     }
 
+
     private ArrayList<String> generateMetaMessage(ArrayList<String> head) {
         HashMap<String, String> bodyMap = new HashMap<>();
         bodyMap.put("url", url);
@@ -75,11 +76,23 @@ public class Downloader implements Runnable {
         return Message.encode(bodyMap, RequestTypes.META_DATA, "meta", head);
     }
 
+    private ArrayList<String> generateUrlListMessage(ArrayList<URI> urls) {
+        HashMap<String, String> bodyMap = new HashMap<>();
+        bodyMap.put("url", url);
+
+        ArrayList<String> urlStrings = new ArrayList<>();
+        for (URI uri : urls) {
+            urlStrings.add(uri.toString());
+        }
+
+        return Message.encode(bodyMap, RequestTypes.URL_LIST, "url", urlStrings);
+    }
+
     @Override
     public void run() {
         LOGGER.info("Starting download of " + this.url);
 
-        List<URI> urls = getURLs(this.url);
+        ArrayList<URI> urls = getURLs(this.url);
 
         System.out.println("Found " + urls.size() + " URLs in " + this.url);
 
@@ -93,19 +106,13 @@ public class Downloader implements Runnable {
         ArrayList<String> head = HtmlParser.getHead(this.url);
 
         try {
-            commHandler.sendMessage(generateMetaMessage(head));
             commHandler.sendMessage(generateIndexMessage(words));
+            commHandler.sendMessage(generateUrlListMessage(urls));
+            commHandler.sendMessage(generateMetaMessage(head));
         } catch (Exception e) {
             System.out.println("Error encoding message: " + e);
         } finally {
             commHandler.closeSocket();
         }
-    }
-
-    /**
-     * Send data to the server through multicast
-     */
-    private void sendData() {
-
     }
 }
