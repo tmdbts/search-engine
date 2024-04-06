@@ -1,13 +1,11 @@
 package pt.uc.dei.student.tmdbts.search_engine.storage_barrels;
 
 import pt.uc.dei.student.tmdbts.search_engine.protocol.Message;
-import pt.uc.dei.student.tmdbts.search_engine.protocol.RequestTypes;
 
 import java.net.URI;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 
 public class Index {
@@ -42,34 +40,45 @@ public class Index {
             return;
         }
 
-        if (message.getType().equals(RequestTypes.WORD_LIST)) {
-            for (String item : message.getList()) {
-                URI current = URI.create(message.getBodyMap().get("url"));
+        switch (message.getType()) {
+            case WORD_LIST:
+                handleWordList();
+                break;
 
-                ArrayList<URI> currentURL = new ArrayList<>();
-
-                if (index.get(item) != null && index.get(item).contains(current)) {
-                    continue;
-                } else if (index.get(item) != null && !index.get(item).contains(current)){
-                    index.get(item).add(current);
-                } else {
-                    currentURL.add(current);
-                    index.put(item, currentURL);
-                }
-
-                Path path = Path.of("./index.txt");
-
-                FileReadWriter.writeData(index, path.toString());
-            }
+            case URL_LIST:
+                break;
+            default:
+                System.out.println("Invalid message type");
         }
     }
 
-    public HashMap<String, ArrayList<URI>> handleQuery (String query){
+    private void handleWordList() {
+        for (String item : message.getList()) {
+            URI current = URI.create(message.getBodyMap().get("url"));
+
+            ArrayList<URI> currentURL = new ArrayList<>();
+
+            if (index.get(item) != null && index.get(item).contains(current)) {
+                continue;
+            } else if (index.get(item) != null && !index.get(item).contains(current)) {
+                index.get(item).add(current);
+            } else {
+                currentURL.add(current);
+                index.put(item, currentURL);
+            }
+
+            Path path = Path.of("./index.txt");
+
+            FileReadWriter.writeData(index, path.toString());
+        }
+    }
+
+    public HashMap<String, ArrayList<URI>> handleQuery(String query) {
         String[] splitedQuery = query.split(" ");
 
         HashMap<String, ArrayList<URI>> results = new HashMap<>();
-        for (String word : splitedQuery){
-            if (index.containsKey(word)){
+        for (String word : splitedQuery) {
+            if (index.containsKey(word)) {
                 results.put(word, index.get(word));
             }
         }
