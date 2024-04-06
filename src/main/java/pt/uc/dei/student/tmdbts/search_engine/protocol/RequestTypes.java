@@ -10,7 +10,7 @@ public enum RequestTypes {
     private final String typeString;
 
     RequestTypes(String stringType) {
-        this.typeString = this.name();
+        this.typeString = stringType;
     }
 
     public String getTypeString() {
