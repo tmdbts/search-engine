@@ -40,8 +40,14 @@ public class Downloader implements Runnable {
         List<URI> urls = new ArrayList<>();
 
         for (Element element : fetchedUrls) {
+            String href = element.attr("href");
+
+            while (href.endsWith("/") || href.endsWith("#")) {
+                href = href.substring(0, href.length() - 1);
+            }
+
             try {
-                URI uri = new URI(element.attr("href"));
+                URI uri = new URI(href);
                 if (!uri.isAbsolute()) {
                     continue;
                 }
