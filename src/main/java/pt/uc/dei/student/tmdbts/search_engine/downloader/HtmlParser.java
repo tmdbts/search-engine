@@ -30,7 +30,6 @@ public class HtmlParser {
             '.', '/', '?', '(', ')', '[', ']', '{', '}', ';', ':', '<', '>', ',', '"', '*'
     ));
 
-
     /**
      * Get URLs from a given URL
      *
@@ -46,10 +45,30 @@ public class HtmlParser {
 
             urls.addAll(links);
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("Error fetching URL: " + e.getMessage());
         }
 
         return urls;
+    }
+
+    public static ArrayList<String> getHead(String url) {
+        ArrayList<String> head = new ArrayList<>();
+
+        try {
+            Document document = Jsoup.connect(url).get();
+
+            head.add(document.title());
+
+            Elements description = document.select("meta[name=description]");
+            for (Element element : description) {
+                String theDescription = element.attr("content");
+                head.add(theDescription);
+            }
+        } catch (IOException e) {
+            System.out.println("Error fetching URL: " + e.getMessage());
+        }
+
+        return head;
     }
 
     public static ArrayList<String> getWords(String url) {
@@ -68,7 +87,7 @@ public class HtmlParser {
             }
 
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("Error fetching URL: " + e.getMessage());
         }
 
         return words;

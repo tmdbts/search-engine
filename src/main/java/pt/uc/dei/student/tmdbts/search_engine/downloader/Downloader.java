@@ -68,6 +68,13 @@ public class Downloader implements Runnable {
         return Message.encode(bodyMap, RequestTypes.WORD_LIST, "word", words);
     }
 
+    private ArrayList<String> generateMetaMessage(ArrayList<String> head) {
+        HashMap<String, String> bodyMap = new HashMap<>();
+        bodyMap.put("url", url);
+
+        return Message.encode(bodyMap, RequestTypes.META_DATA, "meta", head);
+    }
+
     @Override
     public void run() {
         LOGGER.info("Starting download of " + this.url);
@@ -83,8 +90,10 @@ public class Downloader implements Runnable {
         }
 
         ArrayList<String> words = HtmlParser.getWords(this.url);
+        ArrayList<String> head = HtmlParser.getHead(this.url);
 
         try {
+            commHandler.sendMessage(generateMetaMessage(head));
             commHandler.sendMessage(generateIndexMessage(words));
         } catch (Exception e) {
             System.out.println("Error encoding message: " + e);
