@@ -37,6 +37,10 @@ public class Index {
         message.parseMessage(inComingMessage);
         namesList = message.getList();
 
+        if (message.getType() == null) {
+            return;
+        }
+
         if (message.getType().equals(RequestTypes.WORD_LIST)) {
             for (String item : message.getList()) {
                 URI current = URI.create(message.getBodyMap().get("url"));
