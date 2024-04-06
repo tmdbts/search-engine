@@ -1,5 +1,16 @@
 package pt.uc.dei.student.tmdbts.search_engine.downloader;
 
+import org.jsoup.nodes.Element;
+import pt.uc.dei.student.tmdbts.search_engine.gateway.Gateway;
+import pt.uc.dei.student.tmdbts.search_engine.protocol.CommunicationHandler;
+import pt.uc.dei.student.tmdbts.search_engine.protocol.Message;
+import pt.uc.dei.student.tmdbts.search_engine.protocol.RequestTypes;
+
+import java.net.URI;
+import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.logging.Logger;
 
 public class Downloader implements Runnable {
@@ -7,21 +18,73 @@ public class Downloader implements Runnable {
 
     private final String url;
 
-    private final String multicastAddress = "";
+    private CommunicationHandler commHandler;
 
-    public Downloader(String url) {
+    private Gateway gateway;
+
+    public Downloader(URI url, Gateway gateway) {
+        this.url = url.toString();
+        this.gateway = gateway;
+        this.commHandler = new CommunicationHandler();
+    }
+
+    public Downloader(String url, Gateway gateway, CommunicationHandler commHandler) {
         this.url = url;
-//        TODO: Initialise multicast address
+        this.gateway = gateway;
+        this.commHandler = commHandler;
+    }
+
+    private List<URI> getURLs(String url) {
+        List<Element> fetchedUrls = HtmlParser.getURLs(url);
+
+        List<URI> urls = new ArrayList<>();
+
+        for (Element element : fetchedUrls) {
+            try {
+                URI uri = new URI(element.attr("href"));
+                if (!uri.isAbsolute()) {
+                    continue;
+                }
+
+                urls.add(uri);
+            } catch (Exception e) {
+                LOGGER.warning("Error parsing URL: " + e);
+            }
+        }
+
+        return urls;
+    }
+
+    private ArrayList<String> generateIndexMessage(ArrayList<String> words) {
+        HashMap<String, String> bodyMap = new HashMap<>();
+        bodyMap.put("url", url);
+
+        return Message.encode(bodyMap, RequestTypes.WORD_LIST, "word", words);
     }
 
     @Override
     public void run() {
         LOGGER.info("Starting download of " + this.url);
 
-//        TODO: get urls
-//        TODO: send found URLs to URLQueue
-//        TODO: get words
-//        TODO: send data to inverted index
+        List<URI> urls = getURLs(this.url);
+
+        System.out.println("Found " + urls.size() + " URLs in " + this.url);
+
+        try {
+            gateway.addURL(urls);
+        } catch (RemoteException e) {
+            System.out.println("Error adding URLs to queue: " + e);
+        }
+
+        ArrayList<String> words = HtmlParser.getWords(this.url);
+
+        try {
+            commHandler.sendMessage(generateIndexMessage(words));
+        } catch (Exception e) {
+            System.out.println("Error encoding message: " + e);
+        } finally {
+            commHandler.closeSocket();
+        }
     }
 
     /**
