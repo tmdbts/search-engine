@@ -1,13 +1,13 @@
 package pt.uc.dei.student.tmdbts.search_engine.downloader;
 
-import java.util.logging.Logger;
-
 public class Main {
     public static void main(String[] args) {
-        Logger logger = Logger.getLogger(Main.class.getName());
+        if (args.length != 0) {
+            System.out.println("Usage: java -jar downloader.jar <url>");
+            System.exit(1);
+        }
 
-        Crawler crawler = new Crawler();
-
-        crawler.run();
+        View view = new View();
+        view.displaySearchBar();
     }
 }
