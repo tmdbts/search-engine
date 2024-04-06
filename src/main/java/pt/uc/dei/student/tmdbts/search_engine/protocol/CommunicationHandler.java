@@ -4,8 +4,9 @@ import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.MulticastSocket;
+import java.util.ArrayList;
 
-public class SEProtocol {
+public class CommunicationHandler {
     private final String GROUP_IP_ADDRESS = "224.0.0.69";
 
     private final int PORT = 42069;
@@ -14,7 +15,7 @@ public class SEProtocol {
 
     private InetAddress group;
 
-    public SEProtocol() {
+    public CommunicationHandler() {
         try {
             this.socket = new MulticastSocket(PORT);
             this.group = InetAddress.getByName(GROUP_IP_ADDRESS);
@@ -42,10 +43,7 @@ public class SEProtocol {
 
         socket.receive(receivePacket);
 
-        String message = new String(receivePacket.getData(), 0, receivePacket.getLength());
-        System.out.println("Message received from multicast group: " + message);
-
-        return message;
+        return new String(receivePacket.getData(), 0, receivePacket.getLength());
     }
 
     public void closeSocket() {

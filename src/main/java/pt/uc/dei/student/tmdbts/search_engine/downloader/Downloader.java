@@ -2,9 +2,9 @@ package pt.uc.dei.student.tmdbts.search_engine.downloader;
 
 import org.jsoup.nodes.Element;
 import pt.uc.dei.student.tmdbts.search_engine.gateway.Gateway;
+import pt.uc.dei.student.tmdbts.search_engine.protocol.CommunicationHandler;
 import pt.uc.dei.student.tmdbts.search_engine.protocol.Message;
 import pt.uc.dei.student.tmdbts.search_engine.protocol.RequestTypes;
-import pt.uc.dei.student.tmdbts.search_engine.protocol.SEProtocol;
 
 import java.net.URI;
 import java.rmi.RemoteException;
@@ -18,20 +18,20 @@ public class Downloader implements Runnable {
 
     private final String url;
 
-    private SEProtocol protocol;
+    private CommunicationHandler commHandler;
 
     private Gateway gateway;
 
     public Downloader(URI url, Gateway gateway) {
         this.url = url.toString();
         this.gateway = gateway;
-        this.protocol = new SEProtocol();
+        this.commHandler = new CommunicationHandler();
     }
 
-    public Downloader(String url, Gateway gateway, SEProtocol protocol) {
+    public Downloader(String url, Gateway gateway, CommunicationHandler commHandler) {
         this.url = url;
         this.gateway = gateway;
-        this.protocol = protocol;
+        this.commHandler = commHandler;
     }
 
     private List<URI> getURLs(String url) {
@@ -55,7 +55,7 @@ public class Downloader implements Runnable {
         return urls;
     }
 
-    private String generateIndexMessage(ArrayList<String> words) {
+    private ArrayList<String> generateIndexMessage(ArrayList<String> words) {
         HashMap<String, String> bodyMap = new HashMap<>();
         bodyMap.put("url", url);
 
@@ -68,7 +68,7 @@ public class Downloader implements Runnable {
 
         List<URI> urls = getURLs(this.url);
 
-        System.out.println("Found " + urls.size() + " URLs");
+        System.out.println("Found " + urls.size() + " URLs in " + this.url);
 
         try {
             gateway.addURL(urls);
@@ -79,11 +79,11 @@ public class Downloader implements Runnable {
         ArrayList<String> words = HtmlParser.getWords(this.url);
 
         try {
-            protocol.sendMessage(generateIndexMessage(words));
+            commHandler.sendMessage(generateIndexMessage(words));
         } catch (Exception e) {
             System.out.println("Error encoding message: " + e);
         } finally {
-            protocol.closeSocket();
+            commHandler.closeSocket();
         }
     }
 
