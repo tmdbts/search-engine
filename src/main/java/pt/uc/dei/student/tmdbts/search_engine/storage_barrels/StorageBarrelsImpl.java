@@ -78,17 +78,23 @@ public class StorageBarrelsImpl extends UnicastRemoteObject implements StorageBa
         System.out.println("Notificação recebida para " + barrelName + ": " + message);
     }
 
-    /**
-     * TODO
-     * Gets the top 10 searches
-     *
-     * @return the top 10 searches
-     */
     public String getTopSearches() {
-        StringBuilder stringBuilder = new StringBuilder();
+        List<Map.Entry<String, Integer>> entries = new ArrayList<>(termSearchFrequency.entrySet());
 
-        stringBuilder.append("Top 10 searches:\n");
+        entries.sort((entry1, entry2) -> entry2.getValue().compareTo(entry1.getValue()));
 
-        return stringBuilder.toString();
+        StringBuilder result = new StringBuilder("Top 10 keys with highest values:\n");
+
+        int count = 0;
+        for (Map.Entry<String, Integer> entry : entries) {
+            if (count >= 10) {
+                break;
+            }
+
+            result.append(entry.getKey()).append("\n");
+            count++;
+        }
+
+        return result.toString();
     }
 }
