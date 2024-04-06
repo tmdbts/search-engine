@@ -29,7 +29,8 @@ public class StorageBarrelsImpl extends UnicastRemoteObject implements StorageBa
             gateway.registerForCallback(barrelName, this);
 
             commHandler = new CommunicationHandler();
-            Path path = Path.of("./index.txt");
+
+            Path path = Path.of("./persistence/index.txt");
             index.setIndex(FileReadWriter.readData(path.toString()));
 
             startListening();
