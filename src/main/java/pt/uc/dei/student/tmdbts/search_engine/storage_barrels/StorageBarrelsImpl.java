@@ -4,6 +4,8 @@ import pt.uc.dei.student.tmdbts.search_engine.gateway.Gateway;
 import pt.uc.dei.student.tmdbts.search_engine.gateway.GatewayCallback;
 import pt.uc.dei.student.tmdbts.search_engine.protocol.CommunicationHandler;
 
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Path;
 import java.rmi.Naming;
@@ -11,6 +13,7 @@ import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Properties;
 
 public class StorageBarrelsImpl extends UnicastRemoteObject implements StorageBarrels, GatewayCallback {
     private Thread listenerThread;
@@ -21,9 +24,17 @@ public class StorageBarrelsImpl extends UnicastRemoteObject implements StorageBa
 
     StorageBarrelsImpl(String barrelName) throws RemoteException {
         super();
+
+        String rootPath = System.getProperty("user.dir");
+        String appConfigPath = rootPath + "/app.properties";
+
+        Properties appProps = new Properties();
+
         try {
+            appProps.load(new FileInputStream(appConfigPath));
+
             this.index = new Index();
-            Gateway gateway = (Gateway) Naming.lookup("rmi://localhost:32450/server");
+            Gateway gateway = (Gateway) Naming.lookup("rmi://" + appProps.get("rmi_server_hostname") + ":" + appProps.get("rmi_server_port") + "/server");
             gateway.barrel(barrelName, this);
             System.out.println("Barrel " + barrelName + " sent a connection to server");
             gateway.registerForCallback(barrelName, this);
@@ -34,9 +45,10 @@ public class StorageBarrelsImpl extends UnicastRemoteObject implements StorageBa
             index.setIndex(FileReadWriter.readData(path.toString()));
 
             startListening();
+        } catch (IOException e) {
+            System.out.println("Error loading app properties: " + e.getMessage());
         } catch (Exception e) {
             System.err.println("Error initializing multicast protocol: " + e.getMessage());
-            e.printStackTrace();
         }
     }
 

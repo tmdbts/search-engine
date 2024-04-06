@@ -2,6 +2,8 @@ package pt.uc.dei.student.tmdbts.search_engine.client;
 
 import pt.uc.dei.student.tmdbts.search_engine.gateway.Gateway;
 
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.net.URI;
 import java.rmi.Naming;
 import java.rmi.RemoteException;
@@ -52,12 +54,26 @@ public class ClientImpl extends UnicastRemoteObject {
     }
 
     public static void main(String args[]) {
-        try (Scanner sc = new Scanner(System.in)) {
-            Gateway gateway = (Gateway) Naming.lookup("rmi://localhost:32450/server");
+        String rootPath = System.getProperty("user.dir");
+        String appConfigPath = rootPath + "/app.properties";
+
+        Properties appProps = new Properties();
+        try {
+            appProps.load(new FileInputStream(appConfigPath));
+        } catch (IOException e) {
+            System.out.println("Error loading app properties: " + e.getMessage());
+        }
+
+
+        try (Scanner scanner = new Scanner(System.in)) {
+            Gateway gateway = (Gateway) Naming.lookup("rmi://" + appProps.get("rmi_server_hostname") + ":" + appProps.get("rmi_server_port") + "/server");
+
+            System.out.println("Welcome to Search Engine!");
 
             while (true) {
-                System.out.print("Welcome to Search Engine!\nEnter your query or URL to index -> ");
-                String query = sc.nextLine();
+                System.out.print("Enter your query or URL to index -> ");
+
+                String query = scanner.nextLine();
                 if (query.startsWith("https://")) {
                     URI url = new URI(query);
                     gateway.addURL(url);

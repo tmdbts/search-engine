@@ -2,6 +2,8 @@ package pt.uc.dei.student.tmdbts.search_engine.gateway;
 
 import pt.uc.dei.student.tmdbts.search_engine.storage_barrels.StorageBarrels;
 
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.rmi.Naming;
@@ -86,23 +88,32 @@ public class GatewayImpl extends UnicastRemoteObject implements Gateway {
 
 
     public static void main(String args[]) {
-        String a;
-        int rmiPort = 32450;
+        String rootPath = System.getProperty("user.dir");
+        String appConfigPath = rootPath + "/app.properties";
+
+        Properties appProps = new Properties();
+        try {
+            appProps.load(new FileInputStream(appConfigPath));
+        } catch (IOException e) {
+            System.out.println("Error loading app properties: " + e.getMessage());
+        }
+
+        String input;
+        int rmiPort = Integer.parseInt(appProps.getProperty("rmi_server_port"));
 
         try (Scanner sc = new Scanner(System.in)) {
             GatewayImpl gatewayImpl = new GatewayImpl();
             LocateRegistry.createRegistry(rmiPort);
-            Naming.rebind("rmi://localhost:32450/server", gatewayImpl);
+            Naming.rebind("rmi://" + appProps.get("rmi_server_hostname") + ":" + rmiPort + "/server", gatewayImpl);
             System.out.println("Gateway is ready!");
 
             while (true) {
                 System.out.println("> ");
-                a = sc.nextLine();
+                input = sc.nextLine();
                 for (String key : barrels.keySet()) {
-                    barrels.get(key).printOnBarrel(a);
+                    barrels.get(key).printOnBarrel(input);
                 }
             }
-
         } catch (RemoteException re) {
             System.out.println("Exception in GatewayImpl.main: " + re);
         } catch (MalformedURLException e) {
