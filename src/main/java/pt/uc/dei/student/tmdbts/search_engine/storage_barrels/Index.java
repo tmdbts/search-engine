@@ -42,14 +42,17 @@ public class Index {
         switch (message.getType()) {
             case WORD_LIST:
                 handleWordList();
+                System.out.println("HANDLE WORD LIST " + message.getType() + "\n\n");
                 break;
 
             case URL_LIST:
                 handleURLList();
+                System.out.println("HANDLE URL LIST " + message.getType() + "\n\n");
                 break;
 
             case META_DATA:
                 handleMetaData();
+                System.out.println("HANDLE META DATA " + message.getType() + "\n\n");;
                 break;
             default:
                 System.out.println("Invalid message type");
@@ -112,8 +115,9 @@ public class Index {
             System.out.println("HERE AQUI " + message.getBodyMap().get("meta_0_name"));
             URIInfo uriInfo = new URIInfo(url, message.getBodyMap().get("meta_0_name"), message.getBodyMap().get("meta_1_name"));
 
-            /*uriInfo.setTitle();
-            uriInfo.setDescription();*/
+            System.out.println("URL " + message.getBodyMap().get("url"));
+            System.out.println("Titulo " + message.getBodyMap().get("meta_o_name"));
+            System.out.println("Descricao " + message.getBodyMap().get("meta_1_name"));
 
         }
     }
