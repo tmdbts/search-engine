@@ -1,17 +1,15 @@
 package pt.uc.dei.student.tmdbts.search_engine.client;
 
 import pt.uc.dei.student.tmdbts.search_engine.gateway.Gateway;
-import pt.uc.dei.student.tmdbts.search_engine.storage_barrels.SearchResult;
-import pt.uc.dei.student.tmdbts.search_engine.storage_barrels.URIInfo;
 
-import javax.swing.*;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.rmi.Naming;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.*;
+import java.util.Properties;
+import java.util.Scanner;
 
 public class ClientImpl extends UnicastRemoteObject {
 
@@ -19,39 +17,12 @@ public class ClientImpl extends UnicastRemoteObject {
         super();
     }
 
-    /* TODO LIST
-     *
-     *   Resultados ordenados por nº de ligacoes para cada pagina
-     *
-     *   Consultar lista de paginas com ligacoes especificas para uma pagina especifica
-     *
-     *   Agrupar resultados de pesquisa de 10 em 10
-     *
-     * */
-
-    public static String convertToString(SearchResult result) {
-
-        StringBuilder resultString = new StringBuilder();
-        int counter = 1;
-
-        System.out.println("PROSSECINF");
-
-        for (URIInfo uriInfos : result.getResults()){
-            resultString.append(counter).append(":\nURL-> ").append(uriInfos.getUri().toString()).append("\nTitle-> ").append(uriInfos.getTitle()).append("\nDescription-> ").append(uriInfos.getDescription()).append("\n");
-
-            counter++;
-
-            System.out.println("APPEND");
-        }
-
-        System.out.println("Rest");
-
-        return resultString.toString();
-    }
 
     public static void main(String args[]) {
         String rootPath = System.getProperty("user.dir");
         String appConfigPath = rootPath + "/app.properties";
+
+        int location = 0;
 
         Properties appProps = new Properties();
         try {
@@ -67,39 +38,45 @@ public class ClientImpl extends UnicastRemoteObject {
             System.out.println("Welcome to Search Engine!");
 
             while (true) {
-                System.out.print("Enter your query or URL to index -> ");
+                System.out.print("Enter your query '->', '>' to get more results\nURL to index '!',\nlist URL's that point to a specifi URL '$' or\nopen Admin page 'search' :");
 
                 String query = scanner.nextLine();
-                if (query.startsWith("https://")) {
+
+                if (query.startsWith("!")) {
+                    query = query.substring(1);
                     URI url = new URI(query);
                     gateway.addURL(url);
                     System.out.println("URL requested for indexing: " + query);
-                } else if (query.equals("search://admin")) {
+
+                } else if (query.startsWith("search")) {
+
                     admin(gateway);
+
+                } else if (query.startsWith("->")) {
+                    location = 0;
+                    
+                    String result = "";
+
+                    result = gateway.searchQuery(query.substring(2));
+
+                    System.out.println("Search results: \n" + result);
+
+                } else if (query.startsWith("$")) {
+                    URI url = new URI(query.substring(1));
+
+                    System.out.println("URL results: " + gateway.searchURL(url).toString());
+                } else if (query.startsWith(">")) {
+                    location += 10;
+                    gateway.giveMore10(location);
                 } else {
-                    long startTime = System.nanoTime();
-
-                    System.out.println("GETTING RES");
-
-                    SearchResult result = gateway.search(query);
-
-                    System.out.println("GOT RES");
-
-                    long endTime = System.nanoTime();
-
-                    long duration = (endTime - startTime) / 1_000_000;
-
-                    result.setQueryTime(duration);
-
-                    System.out.println("Search results: \n" + convertToString(result));
+                    System.out.println("Unknown query: " + query);
                 }
+
             }
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
     }
-
-
 
     private static void admin(Gateway gateway) {
         try {

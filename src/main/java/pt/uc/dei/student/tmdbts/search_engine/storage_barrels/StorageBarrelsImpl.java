@@ -27,6 +27,8 @@ public class StorageBarrelsImpl extends UnicastRemoteObject implements StorageBa
 
     private ArrayList<String> recentSearches = new ArrayList<>();
 
+    private SearchResult lastSearchResult;
+
     private Message message;
 
     private ArrayList<String> namesList;
@@ -90,7 +92,7 @@ public class StorageBarrelsImpl extends UnicastRemoteObject implements StorageBa
                 urlInformation.add(index.handleMetaData(message));
                 System.out.println("AQUUIII " + index.handleMetaData(message).toString());
                 System.out.println("HANDLE META DATA " + message.getType() + "\n\n");
-                ;
+
                 break;
             default:
                 System.out.println("Invalid message type");
@@ -104,25 +106,28 @@ public class StorageBarrelsImpl extends UnicastRemoteObject implements StorageBa
     }
 
     @Override
-    public SearchResult search(String query) throws RemoteException {
+    public SearchResult searchQuery(String query) throws RemoteException {
         List<URI> indexResults = index.handleQuery(query);
         SearchResult searchResult = new SearchResult();
 
         for (URI uri : indexResults) {
             for (URIInfo uriInfo : urlInformation) {
-                if (uriInfo.getUri().compareTo(uri)>=0) {
-                    System.out.println("Bota carvao");
+                if (uriInfo.getUri().toString().equals(uri.toString())) {
                     searchResult.addInfo(uriInfo);
-                    System.out.println("botou lhe");
                 }
-                System.out.println("1\n");
             }
-            System.out.println("2\n");
         }
 
-        System.out.println("Here " + searchResult.getResults().toString());
+        lastSearchResult = searchResult;
+
+
+        System.out.println("Search REsult test " + searchResult);
 
         return searchResult;
+    }
+
+    public List<URI> searchURL(URI url) throws RemoteException {
+        return index.handleURL(url);
     }
 
     public void notifyNewDataAvailable(String barrelName, String message) throws RemoteException {

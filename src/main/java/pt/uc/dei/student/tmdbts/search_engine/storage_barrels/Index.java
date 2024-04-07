@@ -93,7 +93,18 @@ public class Index {
         orderedURLs = verifyURLs(results);
         orderedURLs = orderURLs(orderedURLs);
 
+        System.out.println("ORDERED URLS: " + orderedURLs);
+
         return orderedURLs;
+    }
+
+    public List<URI> handleURL(URI url) {
+
+        List<URI> resultURLs = new ArrayList<>();
+
+        resultURLs = urls.get(url);
+
+        return resultURLs;
     }
 
     private List<URI> verifyURLs(HashMap<String, ArrayList<URI>> verifyURL) {
@@ -107,10 +118,6 @@ public class Index {
                 commonURLs.retainAll(urls);
             }
         }
-
-        /*if (commonURLs == null || commonURLs.isEmpty()){
-            return null;
-        }*/
 
         return commonURLs;
     }

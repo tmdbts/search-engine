@@ -3,11 +3,10 @@ package pt.uc.dei.student.tmdbts.search_engine.gateway;
 import pt.uc.dei.student.tmdbts.search_engine.storage_barrels.SearchResult;
 import pt.uc.dei.student.tmdbts.search_engine.storage_barrels.StorageBarrels;
 
+import javax.print.attribute.standard.Media;
 import java.net.URI;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public interface Gateway extends Remote {
@@ -19,7 +18,11 @@ public interface Gateway extends Remote {
 
     void unregisterForCallback(String barrelName) throws RemoteException;
 
-    SearchResult search(String query) throws RemoteException;
+    String searchQuery(String query) throws RemoteException;
+
+    public String giveMore10 (int index) throws RemoteException;
+
+    List<URI> searchURL(URI url) throws RemoteException;
 
     void addURL(URI url) throws RemoteException;
 
