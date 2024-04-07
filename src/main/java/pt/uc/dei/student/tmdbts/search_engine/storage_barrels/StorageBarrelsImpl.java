@@ -14,22 +14,59 @@ import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.*;
 
+/**
+ * Class that represents the storage barrels
+ * <p>
+ * The storage barrels are the components that store the index and the URLs.
+ * They also handle the search requests.
+ * The storage barrels are connected to the server through the Gateway.
+ * They also listen for messages that come from the multicast protocol.
+ * The storage barrels are also responsible for storing the search frequency of a term.
+ * The storage barrels also store the recent searches.
+ * The storage barrels are also responsible for storing the URL information.
+ */
 public class StorageBarrelsImpl extends UnicastRemoteObject implements StorageBarrels, GatewayCallback {
+    /**
+     * Thread that listens for messages that come from the multicast protocol
+     */
     private Thread listenerThread;
 
+    /**
+     * Communication handler to send messages
+     */
     private CommunicationHandler commHandler;
 
+    /**
+     * Index of the storage barrel
+     */
     private Index index;
 
+    /**
+     * List of URL information
+     */
     private List<URIInfo> urlInformation = new LinkedList<>();
 
+    /**
+     * Map that stores the search frequency of a term
+     */
     private HashMap<String, Integer> termSearchFrequency = new HashMap<>();
 
+    /**
+     * List of recent searches
+     */
     private ArrayList<String> recentSearches = new ArrayList<>();
 
+    /**
+     * Message that is received from the multicast protocol
+     */
     private Message message;
 
-    private ArrayList<String> namesList;
+    /**
+     * Constructor
+     *
+     * @param barrelName Name of the barrel
+     * @throws RemoteException If there is an error creating the object
+     */
 
     StorageBarrelsImpl(String barrelName) throws RemoteException {
         super();
@@ -61,6 +98,9 @@ public class StorageBarrelsImpl extends UnicastRemoteObject implements StorageBa
         }
     }
 
+    /**
+     * Start listening for messages
+     */
     private void startListening() {
         listenerThread = new Thread(new MessageListener(commHandler, this));
         listenerThread.start();
@@ -69,7 +109,8 @@ public class StorageBarrelsImpl extends UnicastRemoteObject implements StorageBa
     public void handleMessage(String inComingMessage) {
         message = new Message(inComingMessage);
         message.parseMessage(inComingMessage);
-        namesList = message.getList();
+
+        List<String> namesList = message.getList();
 
         if (message.getType() == null) {
             return;
@@ -98,11 +139,20 @@ public class StorageBarrelsImpl extends UnicastRemoteObject implements StorageBa
 
     }
 
-
+    /**
+     * Print a message on the barrels
+     *
+     * @param s Term to add
+     */
     public void printOnBarrel(String s) throws RemoteException {
         System.out.println("> " + s);
     }
 
+    /**
+     * Search by query
+     *
+     * @param query Term to add
+     */
     @Override
     public SearchResult search(String query) throws RemoteException {
         List<URI> indexResults = index.handleQuery(query);
@@ -110,17 +160,11 @@ public class StorageBarrelsImpl extends UnicastRemoteObject implements StorageBa
 
         for (URI uri : indexResults) {
             for (URIInfo uriInfo : urlInformation) {
-                if (uriInfo.getUri().compareTo(uri)>=0) {
-                    System.out.println("Bota carvao");
+                if (uriInfo.getUri().compareTo(uri) >= 0) {
                     searchResult.addInfo(uriInfo);
-                    System.out.println("botou lhe");
                 }
-                System.out.println("1\n");
             }
-            System.out.println("2\n");
         }
-
-        System.out.println("Here " + searchResult.getResults().toString());
 
         return searchResult;
     }
@@ -129,6 +173,9 @@ public class StorageBarrelsImpl extends UnicastRemoteObject implements StorageBa
         System.out.println("Notificação recebida para " + barrelName + ": " + message);
     }
 
+    /**
+     * Get the top 10 searches
+     */
     public String getTopSearches() {
         List<Map.Entry<String, Integer>> entries = new ArrayList<>(termSearchFrequency.entrySet());
 
