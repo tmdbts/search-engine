@@ -81,7 +81,6 @@ public class GatewayImpl extends UnicastRemoteObject implements Gateway {
     }
 
     public SearchResult search(String query) throws RemoteException {
-
         System.out.println("Searching results for the requested query: " + query);
 
         return barrels.get("test").search(query);

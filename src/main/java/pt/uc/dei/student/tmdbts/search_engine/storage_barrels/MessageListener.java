@@ -25,7 +25,7 @@ public class MessageListener implements Runnable {
 
                 System.out.println("Recived message: " + message);
 
-                storageBarrelsImpl.sendMessage(message);
+                storageBarrelsImpl.handleMessage(message);
             }
         } catch (Exception e) {
             System.out.println("Error while listening for multicast messages: " + e);

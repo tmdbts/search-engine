@@ -34,12 +34,17 @@ public class ClientImpl extends UnicastRemoteObject {
         StringBuilder resultString = new StringBuilder();
         int counter = 1;
 
-        for (URIInfo uriInfos : result.getResults()){
+        System.out.println("PROSSECINF");
 
+        for (URIInfo uriInfos : result.getResults()){
             resultString.append(counter).append(":\nURL-> ").append(uriInfos.getUri().toString()).append("\nTitle-> ").append(uriInfos.getTitle()).append("\nDescription-> ").append(uriInfos.getDescription()).append("\n");
 
             counter++;
+
+            System.out.println("APPEND");
         }
+
+        System.out.println("Rest");
 
         return resultString.toString();
     }
@@ -74,8 +79,11 @@ public class ClientImpl extends UnicastRemoteObject {
                 } else {
                     long startTime = System.nanoTime();
 
-                    ClientImpl client = new ClientImpl();
+                    System.out.println("GETTING RES");
+
                     SearchResult result = gateway.search(query);
+
+                    System.out.println("GOT RES");
 
                     long endTime = System.nanoTime();
 
