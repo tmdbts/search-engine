@@ -9,7 +9,7 @@ import java.util.HashMap;
 public interface StorageBarrels extends Remote {
     public void printOnBarrel(String s) throws java.rmi.RemoteException;
 
-    public HashMap<String, ArrayList<URI>> search(String query) throws java.rmi.RemoteException;
+    public SearchResult search(String query) throws java.rmi.RemoteException;
 
     String getTopSearches() throws RemoteException;
 }

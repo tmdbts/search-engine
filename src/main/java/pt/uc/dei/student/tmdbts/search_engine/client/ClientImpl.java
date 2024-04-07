@@ -1,7 +1,10 @@
 package pt.uc.dei.student.tmdbts.search_engine.client;
 
 import pt.uc.dei.student.tmdbts.search_engine.gateway.Gateway;
+import pt.uc.dei.student.tmdbts.search_engine.storage_barrels.SearchResult;
+import pt.uc.dei.student.tmdbts.search_engine.storage_barrels.URIInfo;
 
+import javax.swing.*;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URI;
@@ -26,8 +29,19 @@ public class ClientImpl extends UnicastRemoteObject {
      *
      * */
 
-    public List<URI> handleQuery(HashMap<String, ArrayList<URI>> queryResults){
-        return verifyURLs(queryResults);
+    public static String convertToString(SearchResult result) {
+
+        StringBuilder resultString = new StringBuilder();
+        int counter = 1;
+
+        for (URIInfo uriInfos : result.getResults()){
+
+            resultString.append(counter).append(":\nURL-> ").append(uriInfos.getUri().toString()).append("\nTitle-> ").append(uriInfos.getTitle()).append("\nDescription-> ").append(uriInfos.getDescription()).append("\n");
+
+            counter++;
+        }
+
+        return resultString.toString();
     }
 
     public static void main(String args[]) {
@@ -58,16 +72,26 @@ public class ClientImpl extends UnicastRemoteObject {
                 } else if (query.equals("search://admin")) {
                     admin(gateway);
                 } else {
-                    ClientImpl client = new ClientImpl();
-                    List<URI> result = client.handleQuery(gateway.search(query));
+                    long startTime = System.nanoTime();
 
-                    System.out.println("Search results: \n" + result);
+                    ClientImpl client = new ClientImpl();
+                    SearchResult result = gateway.search(query);
+
+                    long endTime = System.nanoTime();
+
+                    long duration = (endTime - startTime) / 1_000_000;
+
+                    result.setQueryTime(duration);
+
+                    System.out.println("Search results: \n" + convertToString(result));
                 }
             }
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
     }
+
+
 
     private static void admin(Gateway gateway) {
         try {

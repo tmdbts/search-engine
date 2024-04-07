@@ -47,6 +47,10 @@ public class Index {
             case URL_LIST:
                 handleURLList();
                 break;
+
+            case META_DATA:
+                handleMetaData();
+                break;
             default:
                 System.out.println("Invalid message type");
         }
@@ -101,7 +105,20 @@ public class Index {
         }
     }
 
-    public void handleQuery(String query) {
+    private void handleMetaData (){
+        for (String meta : message.getList()) {
+            URI url = URI.create(message.getBodyMap().get("url"));
+
+            System.out.println("HERE AQUI " + message.getBodyMap().get("meta_0_name"));
+            URIInfo uriInfo = new URIInfo(url, message.getBodyMap().get("meta_0_name"), message.getBodyMap().get("meta_1_name"));
+
+            /*uriInfo.setTitle();
+            uriInfo.setDescription();*/
+
+        }
+    }
+
+    public List<URI> handleQuery(String query) {
         String[] splitedQuery = query.split(" ");
 
         HashMap<String, ArrayList<URI>> results = new HashMap<>();
@@ -110,13 +127,20 @@ public class Index {
                 results.put(word, index.get(word));
             }
         }
+
+        List<URI> orderedURLs;
+
+        orderedURLs = verifyURLs(results);
+        orderedURLs = orderURLs(orderedURLs);
+
+        return orderedURLs;
     }
 
-    private void verifyURLs (HashMap<String, ArrayList<URI>> veriifyURL){
+    private List<URI> verifyURLs (HashMap<String, ArrayList<URI>> verifyURL){
 
         List<URI> commonURLs = null;
 
-        for (List<URI> urls : veriifyURL.values()){
+        for (List<URI> urls : verifyURL.values()){
             if (commonURLs == null){
                 commonURLs = new ArrayList<>(urls);
             }
@@ -125,18 +149,14 @@ public class Index {
             }
         }
 
-        if (commonURLs == null || commonURLs.isEmpty()){
-            //return "No results found!";
-        }
+        /*if (commonURLs == null || commonURLs.isEmpty()){
+            return null;
+        }*/
 
-        orderURLs(commonURLs);
+        return commonURLs;
     }
 
-    private void orderURLs (List<URI> urls){
-
-    }
-
-    public List<URI> uriList(List<URI> urlsToOrder) {
+    public List<URI> orderURLs(List<URI> urlsToOrder) {
 
         Comparator<URI> comparator = new Comparator<URI>() {
 
