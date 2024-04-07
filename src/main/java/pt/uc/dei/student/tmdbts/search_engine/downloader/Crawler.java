@@ -12,6 +12,11 @@ import java.rmi.RemoteException;
 import java.util.HashSet;
 import java.util.Properties;
 
+/**
+ * Class that represents the Crawler
+ * <p>
+ * The Crawler is responsible for downloading the URLs.
+ */
 public class Crawler {
     /**
      * Main method of the Crawler class.
