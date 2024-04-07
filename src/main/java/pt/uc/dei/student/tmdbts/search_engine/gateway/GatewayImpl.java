@@ -11,7 +11,10 @@ import java.rmi.Naming;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Properties;
+import java.util.Scanner;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
 public class GatewayImpl extends UnicastRemoteObject implements Gateway {
@@ -81,7 +84,7 @@ public class GatewayImpl extends UnicastRemoteObject implements Gateway {
 
         System.out.println("Searching results for the requested query: " + query);
 
-        return barrels.get("teste").search(query);
+        return barrels.get("test").search(query);
     }
 
     public String admin() {
