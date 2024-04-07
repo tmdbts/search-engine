@@ -1,5 +1,6 @@
 package pt.uc.dei.student.tmdbts.search_engine.gateway;
 
+import pt.uc.dei.student.tmdbts.search_engine.storage_barrels.SearchResult;
 import pt.uc.dei.student.tmdbts.search_engine.storage_barrels.StorageBarrels;
 
 import java.net.URI;
@@ -18,7 +19,7 @@ public interface Gateway extends Remote {
 
     void unregisterForCallback(String barrelName) throws RemoteException;
 
-    HashMap<String, ArrayList<URI>> search(String query) throws RemoteException;
+    SearchResult search(String query) throws RemoteException;
 
     void addURL(URI url) throws RemoteException;
 

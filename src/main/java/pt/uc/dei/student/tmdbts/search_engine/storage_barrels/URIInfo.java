@@ -1,9 +1,10 @@
 package pt.uc.dei.student.tmdbts.search_engine.storage_barrels;
 
 import java.io.Serializable;
+import java.net.URI;
 
 public class URIInfo implements Serializable {
-    private String uri;
+    private URI uri;
 
     private String title;
 
@@ -12,21 +13,21 @@ public class URIInfo implements Serializable {
     URIInfo() {
     }
 
-    URIInfo(String uri) {
+    URIInfo(URI uri) {
         this.uri = uri;
     }
 
-    URIInfo(String uri, String title, String description) {
+    URIInfo(URI uri, String title, String description) {
         this.uri = uri;
         this.title = title;
         this.description = description;
     }
 
-    public String getUri() {
+    public URI getUri() {
         return uri;
     }
 
-    public void setUri(String uri) {
+    public void setUri(URI uri) {
         this.uri = uri;
     }
 
