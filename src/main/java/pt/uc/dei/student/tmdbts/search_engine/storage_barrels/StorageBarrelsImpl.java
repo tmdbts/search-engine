@@ -3,6 +3,7 @@ package pt.uc.dei.student.tmdbts.search_engine.storage_barrels;
 import pt.uc.dei.student.tmdbts.search_engine.gateway.Gateway;
 import pt.uc.dei.student.tmdbts.search_engine.gateway.GatewayCallback;
 import pt.uc.dei.student.tmdbts.search_engine.protocol.CommunicationHandler;
+import pt.uc.dei.student.tmdbts.search_engine.protocol.Message;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -20,11 +21,15 @@ public class StorageBarrelsImpl extends UnicastRemoteObject implements StorageBa
 
     private Index index;
 
-    private ArrayList<URIInfo> urlInformation = new ArrayList<>();
+    private List<URIInfo> urlInformation = new LinkedList<>();
 
     private HashMap<String, Integer> termSearchFrequency = new HashMap<>();
 
     private ArrayList<String> recentSearches = new ArrayList<>();
+
+    private Message message;
+
+    private ArrayList<String> namesList;
 
     StorageBarrelsImpl(String barrelName) throws RemoteException {
         super();
@@ -61,9 +66,38 @@ public class StorageBarrelsImpl extends UnicastRemoteObject implements StorageBa
         listenerThread.start();
     }
 
-    void sendMessage(String message) {
-        index.handleMessage(message);
+    public void handleMessage(String inComingMessage) {
+        message = new Message(inComingMessage);
+        message.parseMessage(inComingMessage);
+        namesList = message.getList();
+
+        if (message.getType() == null) {
+            return;
+        }
+
+        switch (message.getType()) {
+            case WORD_LIST:
+                index.handleWordList(message);
+                System.out.println("HANDLE WORD LIST " + message.getType() + "\n\n");
+                break;
+
+            case URL_LIST:
+                index.handleURLList(message);
+                System.out.println("HANDLE URL LIST " + message.getType() + "\n\n");
+                break;
+
+            case META_DATA:
+                urlInformation.add(index.handleMetaData(message));
+                System.out.println("AQUUIII " + index.handleMetaData(message).toString());
+                System.out.println("HANDLE META DATA " + message.getType() + "\n\n");
+                ;
+                break;
+            default:
+                System.out.println("Invalid message type");
+        }
+
     }
+
 
     public void printOnBarrel(String s) throws RemoteException {
         System.out.println("> " + s);
@@ -72,18 +106,21 @@ public class StorageBarrelsImpl extends UnicastRemoteObject implements StorageBa
     @Override
     public SearchResult search(String query) throws RemoteException {
         List<URI> indexResults = index.handleQuery(query);
-        ArrayList<URIInfo> uriInfos = new ArrayList<>();
-
-        for (URI uri : indexResults) {
-            URIInfo currentUriInfo = new URIInfo();
-            currentUriInfo.setUri(uri);
-
-            uriInfos.add(currentUriInfo);
-        }
-
         SearchResult searchResult = new SearchResult();
 
-        searchResult.setResults(uriInfos);
+        for (URI uri : indexResults) {
+            for (URIInfo uriInfo : urlInformation) {
+                if (uriInfo.getUri().compareTo(uri)>=0) {
+                    System.out.println("Bota carvao");
+                    searchResult.addInfo(uriInfo);
+                    System.out.println("botou lhe");
+                }
+                System.out.println("1\n");
+            }
+            System.out.println("2\n");
+        }
+
+        System.out.println("Here " + searchResult.getResults().toString());
 
         return searchResult;
     }

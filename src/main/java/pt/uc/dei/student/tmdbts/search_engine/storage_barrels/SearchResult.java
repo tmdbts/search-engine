@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 public class SearchResult implements Serializable {
-    private ArrayList<URIInfo> results;
+    private ArrayList<URIInfo> results = new ArrayList<>();
 
     private long queryTime;
 
@@ -14,6 +14,17 @@ public class SearchResult implements Serializable {
     SearchResult(ArrayList<URIInfo> results, long queryTime) {
         this.results = results;
         this.queryTime = queryTime;
+    }
+
+    public void addInfo(URIInfo uriInfo) {
+        try {
+            results.add(uriInfo);
+        } catch (Exception e) {
+            System.out.println("Error adding URIInfo: " + e.getMessage());
+        }
+
+
+        System.out.println(results.size());
     }
 
     public ArrayList<URIInfo> getResults() {

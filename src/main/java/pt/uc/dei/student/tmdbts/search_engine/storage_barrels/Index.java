@@ -7,7 +7,6 @@ import java.nio.file.Path;
 import java.util.*;
 
 public class Index {
-    private ArrayList<String> namesList;
 
     private HashMap<String, ArrayList<URI>> index = new HashMap<>();
 
@@ -23,37 +22,7 @@ public class Index {
         this.index = index;
     }
 
-    public void handleMessage(String inComingMessage) {
-        message = new Message(inComingMessage);
-        message.parseMessage(inComingMessage);
-        namesList = message.getList();
-
-        if (message.getType() == null) {
-            return;
-        }
-
-        switch (message.getType()) {
-            case WORD_LIST:
-                handleWordList();
-                System.out.println("HANDLE WORD LIST " + message.getType() + "\n\n");
-                break;
-
-            case URL_LIST:
-                handleURLList();
-                System.out.println("HANDLE URL LIST " + message.getType() + "\n\n");
-                break;
-
-            case META_DATA:
-                handleMetaData();
-                System.out.println("HANDLE META DATA " + message.getType() + "\n\n");
-                ;
-                break;
-            default:
-                System.out.println("Invalid message type");
-        }
-    }
-
-    private void handleWordList() {
+    public void handleWordList(Message message) {
 
         for (String item : message.getList()) {
             URI current = URI.create(message.getBodyMap().get("url"));
@@ -80,7 +49,7 @@ public class Index {
         }
     }
 
-    private void handleURLList() {
+    public void handleURLList(Message message) {
         for (String url : message.getList()) {
             URI current = URI.create(message.getBodyMap().get("url"));
             URI urlsCurrent = URI.create(url);
@@ -102,13 +71,10 @@ public class Index {
         }
     }
 
-    private void handleMetaData() {
-        for (String meta : message.getList()) {
-            URI url = URI.create(message.getBodyMap().get("url"));
+    public URIInfo handleMetaData(Message message) {
+        URI url = URI.create(message.getBodyMap().get("url"));
 
-            System.out.println("HERE AQUI " + message.getBodyMap().get("meta_0_name"));
-            URIInfo uriInfo = new URIInfo(url, message.getBodyMap().get("meta_0_name"), message.getBodyMap().get("meta_1_name"));
-        }
+        return new URIInfo(url, message.getBodyMap().get("meta_0_name"), message.getBodyMap().get("meta_1_name"));
 
     }
 
