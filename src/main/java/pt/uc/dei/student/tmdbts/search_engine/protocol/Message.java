@@ -128,13 +128,15 @@ public class Message {
         System.out.println("DEBUG " + messageMap); //mesage map sem type para a meta data
 
         for (String key : messageMap.keySet()) {
+            if (list != null && type != null) {
+                return true;
+            }
+
             if (key.contains("count")) {
                 listLength = Integer.parseInt(messageMap.get(key).trim());
                 listName = key.split("_")[0].trim();
 
                 list = new ArrayList<>();
-
-                return true;
             }
 
             if (key.equals("type")) {
