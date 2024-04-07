@@ -20,6 +20,8 @@ public class StorageBarrelsImpl extends UnicastRemoteObject implements StorageBa
 
     private Index index;
 
+    private ArrayList<URIInfo> urlInformation = new ArrayList<>();
+
     private HashMap<String, Integer> termSearchFrequency = new HashMap<>();
 
     private ArrayList<String> recentSearches = new ArrayList<>();
@@ -69,19 +71,19 @@ public class StorageBarrelsImpl extends UnicastRemoteObject implements StorageBa
 
     @Override
     public SearchResult search(String query) throws RemoteException {
-       List<URI> indexResults = index.handleQuery(query);
-       ArrayList<URIInfo> uriInfos = new ArrayList<>();
+        List<URI> indexResults = index.handleQuery(query);
+        ArrayList<URIInfo> uriInfos = new ArrayList<>();
 
-       for (URI uri : indexResults) {
-           URIInfo currentUriInfo = new URIInfo();
-           currentUriInfo.setUri(uri);
+        for (URI uri : indexResults) {
+            URIInfo currentUriInfo = new URIInfo();
+            currentUriInfo.setUri(uri);
 
-           uriInfos.add(currentUriInfo);
-       }
+            uriInfos.add(currentUriInfo);
+        }
 
-       SearchResult searchResult = new SearchResult();
+        SearchResult searchResult = new SearchResult();
 
-       searchResult.setResults(uriInfos);
+        searchResult.setResults(uriInfos);
 
         return searchResult;
     }

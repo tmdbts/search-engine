@@ -8,8 +8,9 @@ import java.util.*;
 
 public class Index {
     private ArrayList<String> namesList;
+
     private HashMap<String, ArrayList<URI>> index = new HashMap<>();
-    private HashMap<URI, List<String>> meta = new HashMap<>();
+
     private HashMap<URI, ArrayList<URI>> urls = new HashMap<>();
 
     private Message message;
@@ -20,14 +21,6 @@ public class Index {
 
     public void setIndex(HashMap<String, ArrayList<URI>> index) {
         this.index = index;
-    }
-
-    public HashMap<URI, List<String>> getMeta() {
-        return meta;
-    }
-
-    public void setMeta(HashMap<URI, List<String>> meta) {
-        this.meta = meta;
     }
 
     public void handleMessage(String inComingMessage) {
@@ -52,7 +45,8 @@ public class Index {
 
             case META_DATA:
                 handleMetaData();
-                System.out.println("HANDLE META DATA " + message.getType() + "\n\n");;
+                System.out.println("HANDLE META DATA " + message.getType() + "\n\n");
+                ;
                 break;
             default:
                 System.out.println("Invalid message type");
@@ -108,18 +102,14 @@ public class Index {
         }
     }
 
-    private void handleMetaData (){
+    private void handleMetaData() {
         for (String meta : message.getList()) {
             URI url = URI.create(message.getBodyMap().get("url"));
 
             System.out.println("HERE AQUI " + message.getBodyMap().get("meta_0_name"));
             URIInfo uriInfo = new URIInfo(url, message.getBodyMap().get("meta_0_name"), message.getBodyMap().get("meta_1_name"));
-
-            System.out.println("URL " + message.getBodyMap().get("url"));
-            System.out.println("Titulo " + message.getBodyMap().get("meta_o_name"));
-            System.out.println("Descricao " + message.getBodyMap().get("meta_1_name"));
-
         }
+
     }
 
     public List<URI> handleQuery(String query) {
@@ -140,15 +130,14 @@ public class Index {
         return orderedURLs;
     }
 
-    private List<URI> verifyURLs (HashMap<String, ArrayList<URI>> verifyURL){
+    private List<URI> verifyURLs(HashMap<String, ArrayList<URI>> verifyURL) {
 
         List<URI> commonURLs = null;
 
-        for (List<URI> urls : verifyURL.values()){
-            if (commonURLs == null){
+        for (List<URI> urls : verifyURL.values()) {
+            if (commonURLs == null) {
                 commonURLs = new ArrayList<>(urls);
-            }
-            else {
+            } else {
                 commonURLs.retainAll(urls);
             }
         }
