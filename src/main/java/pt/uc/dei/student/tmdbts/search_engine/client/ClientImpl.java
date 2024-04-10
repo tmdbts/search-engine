@@ -11,13 +11,42 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.Properties;
 import java.util.Scanner;
 
+/**
+ * Client implementation
+ */
 public class ClientImpl extends UnicastRemoteObject {
 
     ClientImpl() throws RemoteException {
         super();
     }
 
+    /**
+     * Converts the search result to a string
+     *
+     * @param result search result
+     * @return search result as a string
+     */
+    public static String convertToString(SearchResult result) {
 
+        StringBuilder resultString = new StringBuilder();
+        int counter = 1;
+
+        for (URIInfo uriInfos : result.getResults()) {
+            resultString.append(counter).append(":\nURL-> ").append(uriInfos.getUri().toString()).append("\nTitle-> ").append(uriInfos.getTitle()).append("\nDescription-> ").append(uriInfos.getDescription()).append("\n");
+
+            counter++;
+        }
+
+        return resultString.toString();
+    }
+
+    /**
+     * Main method
+     * <p>
+     * It starts the client and connects to the server. It then waits for user input.
+     *
+     * @param args arguments
+     */
     public static void main(String args[]) {
         String rootPath = System.getProperty("user.dir");
         String appConfigPath = rootPath + "/app.properties";
@@ -30,7 +59,6 @@ public class ClientImpl extends UnicastRemoteObject {
         } catch (IOException e) {
             System.out.println("Error loading app properties: " + e.getMessage());
         }
-
 
         try (Scanner scanner = new Scanner(System.in)) {
             Gateway gateway = (Gateway) Naming.lookup("rmi://" + appProps.get("rmi_server_hostname") + ":" + appProps.get("rmi_server_port") + "/server");
@@ -78,6 +106,11 @@ public class ClientImpl extends UnicastRemoteObject {
         }
     }
 
+    /**
+     * Get the admin info.
+     *
+     * @param gateway gateway
+     */
     private static void admin(Gateway gateway) {
         try {
             String info = gateway.admin();

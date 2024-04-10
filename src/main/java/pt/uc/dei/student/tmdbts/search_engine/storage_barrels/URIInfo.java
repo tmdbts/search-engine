@@ -3,20 +3,48 @@ package pt.uc.dei.student.tmdbts.search_engine.storage_barrels;
 import java.io.Serializable;
 import java.net.URI;
 
+/**
+ * Class that represents the information of a URI
+ * <p>
+ * It contains the URI, the title and the description of the URI
+ */
 public class URIInfo implements Serializable {
+    /**
+     * URI
+     */
     private URI uri;
 
+    /**
+     * Title of the web page the URI represents
+     */
     private String title;
 
+    /**
+     * Description of the web page the URI represents
+     */
     private String description;
 
+    /**
+     * Constructor
+     */
     URIInfo() {
     }
 
+    /**
+     * Constructor
+     *
+     * @param uri URI
+     */
     URIInfo(URI uri) {
         this.uri = uri;
     }
 
+    /**
+     * Constructor
+     *
+     * @param uri   URI
+     * @param title Title of the web page
+     */
     URIInfo(URI uri, String title, String description) {
         this.uri = uri;
         this.title = title;

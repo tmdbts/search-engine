@@ -6,24 +6,35 @@ import java.net.URI;
 import java.nio.file.Path;
 import java.util.*;
 
+/**
+ * Class that represents the index
+ * <p>
+ * The index is a data structure that stores the words and the URLs that contain them. Its format is:
+ * <p>
+ * word -> [url1, url2, url3]
+ */
 public class Index {
-
+    /**
+     * Index
+     */
     private HashMap<String, ArrayList<URI>> index = new HashMap<>();
 
+    /**
+     * TODO: check
+     * List of URLs information
+     */
     private HashMap<URI, ArrayList<URI>> urls = new HashMap<>();
 
-    private Message message;
-
-    public HashMap<String, ArrayList<URI>> getIndex() {
-        return index;
-    }
-
-    public void setIndex(HashMap<String, ArrayList<URI>> index) {
-        this.index = index;
-    }
-
+    /**
+     * Handle a word list request. Add or update the words to the index.
+     * <p>
+     * For each word in the list, a URI is created from the URL in the message.
+     * If the word is already in the index, the URI is added to the list of URLs that contain the word.
+     * If the word is not in the index, a new list is created with the URI.
+     *
+     * @param message The message with the word list
+     */
     public void handleWordList(Message message) {
-
         for (String item : message.getList()) {
             URI current = URI.create(message.getBodyMap().get("url"));
 
@@ -45,10 +56,18 @@ public class Index {
             } catch (Exception e) {
                 System.err.println("Error writing to file in Index: " + e.getMessage());
             }
-
         }
     }
 
+    /**
+     * Handle a URL list request. Add or update the URLs to the list.
+     * <p>
+     * For each URL in the list, a URI is created from the URL in the message.
+     * If the URL is already in the list, the URI is added to the list of URLs that contain the URL.
+     * If the URL is not in the list, a new list is created with the URI.
+     *
+     * @param message The message with the URL list
+     */
     public void handleURLList(Message message) {
         for (String url : message.getList()) {
             URI current = URI.create(message.getBodyMap().get("url"));
@@ -71,6 +90,13 @@ public class Index {
         }
     }
 
+    /**
+     * Handle a metadata request.
+     * <p>
+     * Creates a URIInfo object with the URL and the metadata.
+     *
+     * @param message The message with the metadata
+     */
     public URIInfo handleMetaData(Message message) {
         URI url = URI.create(message.getBodyMap().get("url"));
 
@@ -78,6 +104,16 @@ public class Index {
 
     }
 
+    /**
+     * Handle a search request. Return the URLs that contain the words in the query.
+     * <p>
+     * The query is split into words. For each word, the URLs that contain the word are fetched from the index.
+     * The URLs that contain all the words in the query are fetched.
+     * The URLs are ordered by the number of words they contain.
+     *
+     * @param query The query
+     * @return The URLs that match the query
+     */
     public List<URI> handleQuery(String query) {
         String[] splitedQuery = query.split(" ");
 
@@ -107,6 +143,14 @@ public class Index {
         return resultURLs;
     }
 
+    /**
+     * Check if the URLs contain all the words in the query.
+     * <p>
+     * The URLs are fetched from the index. The URLs that contain all the words in the query are fetched.
+     *
+     * @param verifyURL The URLs to verify
+     * @return The URLs that contain all the words in the query
+     */
     private List<URI> verifyURLs(HashMap<String, ArrayList<URI>> verifyURL) {
 
         List<URI> commonURLs = null;
@@ -122,8 +166,15 @@ public class Index {
         return commonURLs;
     }
 
+    /**
+     * Order the URLs by the number of words they contain.
+     * <p>
+     * The URLs are ordered by the number of words they contain.
+     *
+     * @param urlsToOrder The URLs to order
+     * @return The ordered URLs
+     */
     public List<URI> orderURLs(List<URI> urlsToOrder) {
-
         Comparator<URI> comparator = new Comparator<URI>() {
 
             public int compare(URI uri1, URI uri2) {
@@ -152,4 +203,11 @@ public class Index {
         return sortedURLs;
     }
 
+    public HashMap<String, ArrayList<URI>> getIndex() {
+        return index;
+    }
+
+    public void setIndex(HashMap<String, ArrayList<URI>> index) {
+        this.index = index;
+    }
 }
