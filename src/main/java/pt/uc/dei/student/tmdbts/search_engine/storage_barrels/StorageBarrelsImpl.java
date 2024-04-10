@@ -56,6 +56,8 @@ public class StorageBarrelsImpl extends UnicastRemoteObject implements StorageBa
      */
     private ArrayList<String> recentSearches = new ArrayList<>();
 
+    private SearchResult lastSearchResult;
+
     /**
      * Message that is received from the multicast protocol
      */
@@ -131,7 +133,7 @@ public class StorageBarrelsImpl extends UnicastRemoteObject implements StorageBa
                 urlInformation.add(index.handleMetaData(message));
                 System.out.println("AQUUIII " + index.handleMetaData(message).toString());
                 System.out.println("HANDLE META DATA " + message.getType() + "\n\n");
-                ;
+
                 break;
             default:
                 System.out.println("Invalid message type");
@@ -154,19 +156,27 @@ public class StorageBarrelsImpl extends UnicastRemoteObject implements StorageBa
      * @param query Term to add
      */
     @Override
-    public SearchResult search(String query) throws RemoteException {
+    public SearchResult searchQuery(String query) throws RemoteException {
         List<URI> indexResults = index.handleQuery(query);
         SearchResult searchResult = new SearchResult();
 
         for (URI uri : indexResults) {
             for (URIInfo uriInfo : urlInformation) {
-                if (uriInfo.getUri().compareTo(uri) >= 0) {
+                if (uriInfo.getUri().toString().equals(uri.toString())) {
                     searchResult.addInfo(uriInfo);
                 }
             }
         }
 
+        lastSearchResult = searchResult;
+
+        System.out.println("Search REsult test " + searchResult);
+
         return searchResult;
+    }
+
+    public List<URI> searchURL(URI url) throws RemoteException {
+        return index.handleURL(url);
     }
 
     public void notifyNewDataAvailable(String barrelName, String message) throws RemoteException {

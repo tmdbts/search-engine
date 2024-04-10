@@ -2,6 +2,7 @@ package pt.uc.dei.student.tmdbts.search_engine.storage_barrels;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Class that represents the search results
@@ -66,5 +67,27 @@ public class SearchResult implements Serializable {
 
     public void setQueryTime(long queryTime) {
         this.queryTime = queryTime;
+    }
+
+    public int getTotal_results() {
+        return results.size();
+    }
+
+    public List<URIInfo> return10(int startIndex) {
+        List<URIInfo> return10URLs = new ArrayList<>();
+
+        int lastIndex = startIndex + 10;
+
+        if (lastIndex > results.size()) {
+            lastIndex = results.size() - 1;
+        }
+
+        for (int i = startIndex; i < lastIndex; i++) {
+            return10URLs.add(results.get(i));
+
+            System.out.println("RESULTADOS DIGNOs " + results.get(i).getUri());
+        }
+
+        return return10URLs;
     }
 }

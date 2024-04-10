@@ -129,7 +129,18 @@ public class Index {
         orderedURLs = verifyURLs(results);
         orderedURLs = orderURLs(orderedURLs);
 
+        System.out.println("ORDERED URLS: " + orderedURLs);
+
         return orderedURLs;
+    }
+
+    public List<URI> handleURL(URI url) {
+
+        List<URI> resultURLs = new ArrayList<>();
+
+        resultURLs = urls.get(url);
+
+        return resultURLs;
     }
 
     /**

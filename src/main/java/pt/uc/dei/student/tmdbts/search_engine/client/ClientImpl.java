@@ -1,8 +1,6 @@
 package pt.uc.dei.student.tmdbts.search_engine.client;
 
 import pt.uc.dei.student.tmdbts.search_engine.gateway.Gateway;
-import pt.uc.dei.student.tmdbts.search_engine.storage_barrels.SearchResult;
-import pt.uc.dei.student.tmdbts.search_engine.storage_barrels.URIInfo;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -53,6 +51,8 @@ public class ClientImpl extends UnicastRemoteObject {
         String rootPath = System.getProperty("user.dir");
         String appConfigPath = rootPath + "/app.properties";
 
+        int location = 0;
+
         Properties appProps = new Properties();
         try {
             appProps.load(new FileInputStream(appConfigPath));
@@ -66,32 +66,40 @@ public class ClientImpl extends UnicastRemoteObject {
             System.out.println("Welcome to Search Engine!");
 
             while (true) {
-                System.out.print("Enter your query or URL to index -> ");
+                System.out.print("Enter your query '->', '>' to get more results\nURL to index '!',\nlist URL's that point to a specifi URL '$' or\nopen Admin page 'search' :");
 
                 String query = scanner.nextLine();
-                if (query.startsWith("https://")) {
+
+                if (query.startsWith("!")) {
+                    query = query.substring(1);
                     URI url = new URI(query);
                     gateway.addURL(url);
                     System.out.println("URL requested for indexing: " + query);
-                } else if (query.equals("search://admin")) {
+
+                } else if (query.startsWith("search")) {
+
                     admin(gateway);
+
+                } else if (query.startsWith("->")) {
+                    location = 0;
+                    
+                    String result = "";
+
+                    result = gateway.searchQuery(query.substring(2));
+
+                    System.out.println("Search results: \n" + result);
+
+                } else if (query.startsWith("$")) {
+                    URI url = new URI(query.substring(1));
+
+                    System.out.println("URL results: " + gateway.searchURL(url).toString());
+                } else if (query.startsWith(">")) {
+                    location += 10;
+                    gateway.giveMore10(location);
                 } else {
-                    long startTime = System.nanoTime();
-
-                    System.out.println("GETTING RES");
-
-                    SearchResult result = gateway.search(query);
-
-                    System.out.println("GOT RES");
-
-                    long endTime = System.nanoTime();
-
-                    long duration = (endTime - startTime) / 1_000_000;
-
-                    result.setQueryTime(duration);
-
-                    System.out.println("Search results: \n" + convertToString(result));
+                    System.out.println("Unknown query: " + query);
                 }
+
             }
         } catch (Exception e) {
             System.out.println(e.getMessage());

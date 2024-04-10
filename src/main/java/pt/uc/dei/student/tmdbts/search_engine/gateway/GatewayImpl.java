@@ -2,6 +2,7 @@ package pt.uc.dei.student.tmdbts.search_engine.gateway;
 
 import pt.uc.dei.student.tmdbts.search_engine.storage_barrels.SearchResult;
 import pt.uc.dei.student.tmdbts.search_engine.storage_barrels.StorageBarrels;
+import pt.uc.dei.student.tmdbts.search_engine.storage_barrels.URIInfo;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -41,6 +42,9 @@ public class GatewayImpl extends UnicastRemoteObject implements Gateway {
      * HashMap of callbacks. The key is the barrel name and the value is the GatewayCallback object.
      */
     private final HashMap<String, GatewayCallback> callbacks = new HashMap<>();
+
+    private static StorageBarrels storageBarrels;
+    private SearchResult searchResult;
 
     /**
      * Constructor
@@ -165,10 +169,56 @@ public class GatewayImpl extends UnicastRemoteObject implements Gateway {
      * @return search result
      * @throws RemoteException if there is an error searching
      */
-    public SearchResult search(String query) throws RemoteException {
+    public String searchQuery(String query) throws RemoteException {
         System.out.println("Searching results for the requested query: " + query);
 
-        return barrels.get("test").search(query);
+        List<URIInfo> result;
+
+        long startTime = System.nanoTime();
+
+        searchResult = barrels.get("test").searchQuery(query);
+
+        System.out.println("Search REsult test " + searchResult.getResults());
+
+        long endTime = System.nanoTime();
+
+        long duration = (endTime - startTime) / 1_000_000;
+
+        searchResult.setQueryTime(duration);
+
+        result = searchResult.return10(0);
+
+        String stringResult = convertToString(result); //chega vazio
+
+        System.out.println("AQUI " + stringResult);
+
+        return stringResult;
+    }
+
+    public String giveMore10(int index) {
+        List<URIInfo> result = searchResult.return10(index);
+
+        return convertToString(result);
+    }
+
+
+    private static String convertToString(List<URIInfo> result) {
+
+        String resultString = "";
+
+        for (int i = 0; i < result.size(); i++) {
+
+            resultString = "URL-> " + result.get(i).getUri().toString() + "\n" + "Title-> " + result.get(i).getTitle() + "\n" + "Description-> " + result.get(i).getDescription() + "\n";
+
+            System.out.println("a");
+        }
+
+        return resultString;
+    }
+
+    public List<URI> searchURL(URI url) throws RemoteException {
+
+        return barrels.get("test").searchURL(url);
     }
 
     /**
