@@ -89,7 +89,7 @@ public class CommunicationHandler {
      * @throws Exception If an error occurs while receiving the message
      */
     public String receiveMessage() throws Exception {
-        byte[] receiveData = new byte[1024]; //WARNING: Magic number
+        byte[] receiveData = new byte[2000]; //WARNING: Magic number
         DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
 
         socket.receive(receivePacket);
