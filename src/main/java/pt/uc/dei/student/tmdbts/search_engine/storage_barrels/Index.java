@@ -20,8 +20,7 @@ public class Index {
     private HashMap<String, ArrayList<URI>> index = new HashMap<>();
 
     /**
-     * TODO: check
-     * List of URLs information
+     * List of URLs linked to a URL
      */
     private HashMap<URI, ArrayList<URI>> urls = new HashMap<>();
 
@@ -129,14 +128,14 @@ public class Index {
         orderedURLs = verifyURLs(results);
         orderedURLs = orderURLs(orderedURLs);
 
-        System.out.println("ORDERED URLS: " + orderedURLs);
+//        System.out.println("ORDERED URLS: " + orderedURLs);
 
         return orderedURLs;
     }
 
     public List<URI> handleURL(URI url) {
 
-        List<URI> resultURLs = new ArrayList<>();
+        List<URI> resultURLs;
 
         resultURLs = urls.get(url);
 

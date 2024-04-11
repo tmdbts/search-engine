@@ -230,7 +230,7 @@ public class Message {
     private boolean findListProperties(HashMap<String, String> messageMap) {
         if (!containsList(messageMap)) return false;
 
-        System.out.println("DEBUG " + messageMap); //mesage map sem type para a meta data
+//        System.out.println("DEBUG " + messageMap); //mesage map sem type para a meta data
 
         for (String key : messageMap.keySet()) {
             if (list != null && type != null) {
@@ -246,7 +246,7 @@ public class Message {
 
             if (key.equals("type")) {
                 type = RequestTypes.fromString(messageMap.get(key).trim());
-                System.out.println("HERE " + type);
+//                System.out.println("HERE " + type);
             }
         }
 

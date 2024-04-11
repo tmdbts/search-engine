@@ -64,9 +64,15 @@ public class ClientImpl extends UnicastRemoteObject {
             Gateway gateway = (Gateway) Naming.lookup("rmi://" + appProps.get("rmi_server_hostname") + ":" + appProps.get("rmi_server_port") + "/server");
 
             System.out.println("Welcome to Search Engine!");
+            System.out.println();
 
             while (true) {
-                System.out.print("Enter your query '->', '>' to get more results\nURL to index '!',\nlist URL's that point to a specifi URL '$' or\nopen Admin page 'search' :");
+                System.out.println("Search a query: ->");
+                System.out.println("Get more results of a search: >");
+                System.out.println("Index a URL: !");
+                System.out.println("Search for a URL: $");
+                System.out.println("Open Admin page: search://status");
+                System.out.println();
 
                 String query = scanner.nextLine();
 
@@ -76,13 +82,13 @@ public class ClientImpl extends UnicastRemoteObject {
                     gateway.addURL(url);
                     System.out.println("URL requested for indexing: " + query);
 
-                } else if (query.startsWith("search")) {
+                } else if (query.startsWith("search://status")) {
 
                     admin(gateway);
 
                 } else if (query.startsWith("->")) {
                     location = 0;
-                    
+
                     String result = "";
 
                     result = gateway.searchQuery(query.substring(2));
