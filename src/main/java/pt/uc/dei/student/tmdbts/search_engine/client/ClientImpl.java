@@ -1,6 +1,8 @@
 package pt.uc.dei.student.tmdbts.search_engine.client;
 
 import pt.uc.dei.student.tmdbts.search_engine.gateway.Gateway;
+import pt.uc.dei.student.tmdbts.search_engine.storage_barrels.SearchResult;
+import pt.uc.dei.student.tmdbts.search_engine.storage_barrels.URIInfo;
 
 import java.io.FileInputStream;
 import java.io.IOException;
