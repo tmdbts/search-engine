@@ -59,11 +59,6 @@ public class StorageBarrelsImpl extends UnicastRemoteObject implements StorageBa
     private SearchResult lastSearchResult;
 
     /**
-     * Message that is received from the multicast protocol
-     */
-    private Message message;
-
-    /**
      * Constructor
      *
      * @param barrelName Name of the barrel
@@ -93,6 +88,8 @@ public class StorageBarrelsImpl extends UnicastRemoteObject implements StorageBa
             index.setIndex(FileReadWriter.readData(path.toString()));
 
             startListening();
+
+            listenerThread.join();
         } catch (IOException e) {
             System.out.println("Error loading app properties: " + e.getMessage());
         } catch (Exception e) {
@@ -109,30 +106,29 @@ public class StorageBarrelsImpl extends UnicastRemoteObject implements StorageBa
     }
 
     public void handleMessage(String inComingMessage) {
-        message = new Message(inComingMessage);
+        Message message = new Message(inComingMessage);
         message.parseMessage(inComingMessage);
 
-        List<String> namesList = message.getList();
-
         if (message.getType() == null) {
-            return;
+            System.out.println("Invalid message type");
+            System.out.println("Body message: " + message.getBody());
+            System.out.println();
+            System.out.println("Body map: " + message.getBodyMap());
         }
 
         switch (message.getType()) {
             case WORD_LIST:
                 index.handleWordList(message);
-                System.out.println("HANDLE WORD LIST " + message.getType() + "\n\n");
+
                 break;
 
             case URL_LIST:
                 index.handleURLList(message);
-                System.out.println("HANDLE URL LIST " + message.getType() + "\n\n");
+
                 break;
 
             case META_DATA:
                 urlInformation.add(index.handleMetaData(message));
-                System.out.println("AQUUIII " + index.handleMetaData(message).toString());
-                System.out.println("HANDLE META DATA " + message.getType() + "\n\n");
 
                 break;
             default:
@@ -170,7 +166,7 @@ public class StorageBarrelsImpl extends UnicastRemoteObject implements StorageBa
 
         lastSearchResult = searchResult;
 
-        System.out.println("Search REsult test " + searchResult);
+        System.out.println("Search Result test " + searchResult);
 
         return searchResult;
     }
