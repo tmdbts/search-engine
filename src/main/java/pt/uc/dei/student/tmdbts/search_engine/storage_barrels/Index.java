@@ -85,7 +85,7 @@ public class Index {
 
             Path path = Path.of("./persistence/url_list.txt");
 
-            FileReadWriter.writeUrlsData(urls, path.toString());
+            FileReadWriter.writeUrls(urls, path.toString());
         }
     }
 

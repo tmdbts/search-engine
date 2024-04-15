@@ -9,6 +9,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -49,7 +50,7 @@ public abstract class FileReadWriter {
      * @param urls     The URLs data
      * @param filePath The file path
      */
-    public static void writeUrlsData(HashMap<URI, ArrayList<URI>> urls, String filePath) {
+    public static void writeUrls(HashMap<URI, ArrayList<URI>> urls, String filePath) {
         try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(filePath))) {
             for (Map.Entry<URI, ArrayList<URI>> entry : urls.entrySet()) {
                 String urlist = entry.getValue().stream().map(URI::toString).collect(Collectors.joining(", "));
@@ -93,9 +94,42 @@ public abstract class FileReadWriter {
                 }
             }
         } catch (IOException e) {
-            System.err.println("Error reading the file: " + e.getMessage());
+            System.err.println("Error reading the file " + filePath + ": " + e.getMessage());
         }
 
         return index;
+    }
+
+    public static HashMap<URI, List<URI>> readUrls(String filePath) {
+        HashMap<URI, List<URI>> urlList = new HashMap<>();
+
+        try (BufferedReader reader = Files.newBufferedReader(Paths.get(filePath))) {
+            String line;
+
+            while ((line = reader.readLine()) != null) {
+                String[] parts = line.split(" \\| ");
+
+                URI uri_key = URI.create(parts[0]);
+
+                String[] urls = parts[1].split(", ");
+
+                ArrayList<URI> uriList = new ArrayList<>();
+
+                for (String url : urls) {
+                    try {
+                        URI uri_value = URI.create(url.trim());
+                        uriList.add(uri_value);
+                    } catch (Exception e) {
+                        System.err.println("Invalid URI syntax: " + url);
+                    }
+                }
+
+                urlList.put(uri_key, uriList);
+            }
+        } catch (IOException e) {
+            System.err.println("Error reading the file " + filePath + ": " + e.getMessage());
+        }
+
+        return urlList;
     }
 }
