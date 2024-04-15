@@ -48,9 +48,6 @@ public class SearchResult implements Serializable {
         } catch (Exception e) {
             System.out.println("Error adding URIInfo: " + e.getMessage());
         }
-
-
-        System.out.println(results.size());
     }
 
     public ArrayList<URIInfo> getResults() {
@@ -84,8 +81,6 @@ public class SearchResult implements Serializable {
 
         for (int i = startIndex; i < lastIndex; i++) {
             return10URLs.add(results.get(i));
-
-            System.out.println("RESULTADOS DIGNOs " + results.get(i).getUri());
         }
 
         return return10URLs;

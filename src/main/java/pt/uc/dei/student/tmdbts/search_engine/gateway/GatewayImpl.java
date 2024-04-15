@@ -178,7 +178,7 @@ public class GatewayImpl extends UnicastRemoteObject implements Gateway {
 
         searchResult = barrels.get("test").searchQuery(query);
 
-        System.out.println("Search REsult test " + searchResult.getResults());
+        System.out.println("Search Result test " + searchResult.getResults());
 
         long endTime = System.nanoTime();
 
@@ -188,9 +188,9 @@ public class GatewayImpl extends UnicastRemoteObject implements Gateway {
 
         result = searchResult.return10(0);
 
-        String stringResult = convertToString(result); //chega vazio
+        System.out.println("Resultados espectados" + result.getFirst().getUri().toString());
 
-        System.out.println("AQUI " + stringResult);
+        String stringResult = convertToString(result);
 
         return stringResult;
     }
@@ -208,7 +208,9 @@ public class GatewayImpl extends UnicastRemoteObject implements Gateway {
 
         for (int i = 0; i < result.size(); i++) {
 
-            resultString = "URL-> " + result.get(i).getUri().toString() + "\n" + "Title-> " + result.get(i).getTitle() + "\n" + "Description-> " + result.get(i).getDescription() + "\n";
+            resultString = "URL-> " + result.get(i).getUri().toString() + "\n" +
+                    "Title-> " + result.get(i).getTitle() + "\n" + "Description-> " +
+                    result.get(i).getDescription() + "\n";
 
             System.out.println("a");
         }
@@ -275,7 +277,8 @@ public class GatewayImpl extends UnicastRemoteObject implements Gateway {
         try (Scanner sc = new Scanner(System.in)) {
             GatewayImpl gatewayImpl = new GatewayImpl();
             LocateRegistry.createRegistry(rmiPort);
-            Naming.rebind("rmi://" + appProps.get("rmi_server_hostname") + ":" + rmiPort + "/server", gatewayImpl);
+            Naming.rebind("rmi://" + appProps.get("rmi_server_hostname") + ":" +
+                    rmiPort + "/server", gatewayImpl);
             System.out.println("Gateway is ready!");
 
             while (true) {

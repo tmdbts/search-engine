@@ -40,6 +40,10 @@ public class StorageBarrelsImpl extends UnicastRemoteObject implements StorageBa
      * Index of the storage barrel
      */
     private Index index;
+    /**
+     * Url List of storage barrel
+     */
+    private HashMap<URI, List<URI>> urlList;
 
     /**
      * List of URL information
@@ -84,8 +88,14 @@ public class StorageBarrelsImpl extends UnicastRemoteObject implements StorageBa
 
             commHandler = new CommunicationHandler();
 
-            Path path = Path.of("./persistence/index.txt");
-            index.setIndex(FileReadWriter.readData(path.toString()));
+            Path pathIndex = Path.of("./persistence/index.txt");
+            index.setIndex(FileReadWriter.readData(pathIndex.toString()));
+
+            urlList = new HashMap<>();
+
+            Path pathUrlList = Path.of("./persistence/url_list.txt");
+
+            urlList = FileReadWriter.readUrls(pathUrlList.toString());
 
             startListening();
 
@@ -157,8 +167,15 @@ public class StorageBarrelsImpl extends UnicastRemoteObject implements StorageBa
         SearchResult searchResult = new SearchResult();
 
         for (URI uri : indexResults) {
-            for (URIInfo uriInfo : urlInformation) {
+            System.out.println("Resultados index.handleQuerry " + uri);
+            for (URIInfo uriInfo : urlInformation) { // Problema
+
+                System.out.println("Resultado do if(uriInfo.getUri().toString().equals(uri.toString()))" + uriInfo.getUri().toString().equals(uri.toString()));
+
                 if (uriInfo.getUri().toString().equals(uri.toString())) {
+
+                    System.out.println("URLs encontrados: " + uri);
+
                     searchResult.addInfo(uriInfo);
                 }
             }
@@ -166,13 +183,11 @@ public class StorageBarrelsImpl extends UnicastRemoteObject implements StorageBa
 
         lastSearchResult = searchResult;
 
-        System.out.println("Search Result test " + searchResult);
-
         return searchResult;
     }
 
     public List<URI> searchURL(URI url) throws RemoteException {
-        return index.handleURL(url);
+        return urlList.get(url);
     }
 
     public void notifyNewDataAvailable(String barrelName, String message) throws RemoteException {
