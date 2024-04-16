@@ -91,9 +91,7 @@ public class ClientImpl extends UnicastRemoteObject {
                 } else if (query.startsWith("->")) {
                     location = 0;
 
-                    String result = "";
-
-                    result = gateway.searchQuery(query.substring(2));
+                    String result = gateway.searchQuery(query.substring(2));
 
                     System.out.println("Search results: \n" + result);
 

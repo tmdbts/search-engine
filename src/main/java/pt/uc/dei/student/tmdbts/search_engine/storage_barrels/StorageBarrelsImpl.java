@@ -170,7 +170,7 @@ public class StorageBarrelsImpl extends UnicastRemoteObject implements StorageBa
             System.out.println("Resultados index.handleQuerry " + uri);
             for (URIInfo uriInfo : urlInformation) { // Problema
 
-                System.out.println("Resultado do if(uriInfo.getUri().toString().equals(uri.toString()))" + uriInfo.getUri().toString().equals(uri.toString()));
+//                System.out.println("Resultado do if(uriInfo.getUri().toString().equals(uri.toString()))" + uriInfo.getUri().toString().equals(uri.toString()));
 
                 if (uriInfo.getUri().toString().equals(uri.toString())) {
 

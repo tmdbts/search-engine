@@ -178,8 +178,6 @@ public class GatewayImpl extends UnicastRemoteObject implements Gateway {
 
         searchResult = barrels.get("test").searchQuery(query);
 
-        System.out.println("Search REsult test " + searchResult.getResults());
-
         long endTime = System.nanoTime();
 
         long duration = (endTime - startTime) / 1_000_000;
@@ -189,8 +187,6 @@ public class GatewayImpl extends UnicastRemoteObject implements Gateway {
         result = searchResult.return10(0);
 
         String stringResult = convertToString(result); //chega vazio
-
-        System.out.println("AQUI " + stringResult);
 
         return stringResult;
     }
@@ -217,7 +213,6 @@ public class GatewayImpl extends UnicastRemoteObject implements Gateway {
     }
 
     public List<URI> searchURL(URI url) throws RemoteException {
-
         return barrels.get("test").searchURL(url);
     }
 
@@ -229,7 +224,7 @@ public class GatewayImpl extends UnicastRemoteObject implements Gateway {
     public String admin() {
         StringBuilder stringBuilder = new StringBuilder();
 
-        System.out.println("B:" + getBarrels());
+//        System.out.println("B:" + getBarrels());
 
         stringBuilder.append(getBarrels());
 
