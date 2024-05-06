@@ -48,19 +48,13 @@ public class StorageBarrelsImpl extends UnicastRemoteObject implements StorageBa
     /**
      * List of URL information
      */
-    private List<URIInfo> urlInformation = new LinkedList<>();
+    private ArrayList<URIInfo> urlInformation = new ArrayList<>();
 
     /**
      * Map that stores the search frequency of a term
      */
     private HashMap<String, Integer> termSearchFrequency = new HashMap<>();
 
-    /**
-     * List of recent searches
-     */
-    private ArrayList<String> recentSearches = new ArrayList<>();
-
-    private SearchResult lastSearchResult;
 
     /**
      * Constructor
@@ -162,28 +156,42 @@ public class StorageBarrelsImpl extends UnicastRemoteObject implements StorageBa
      * @param query Term to add
      */
     @Override
-    public SearchResult searchQuery(String query) throws RemoteException {
+    public String searchQuery(String query) throws RemoteException {
         List<URI> indexResults = index.handleQuery(query);
         SearchResult searchResult = new SearchResult();
-
-        for (URI uri : indexResults) {
-            System.out.println("Resultados index.handleQuerry " + uri);
-            for (URIInfo uriInfo : urlInformation) { // Problema
-
-//                System.out.println("Resultado do if(uriInfo.getUri().toString().equals(uri.toString()))" + uriInfo.getUri().toString().equals(uri.toString()));
-
-                if (uriInfo.getUri().toString().equals(uri.toString())) {
-
-                    System.out.println("URLs encontrados: " + uri);
-
+        for (URI result : indexResults) {
+            System.out.println("Result uri " + result);
+            for (URIInfo uriInfo : urlInformation) {
+                System.out.println("equals result " + uriInfo.getUri().equals(result));
+                if (uriInfo.getUri().equals(result)) {
+                    System.out.println("Found URI: " + uriInfo.getUri() + "\n");
                     searchResult.addInfo(uriInfo);
                 }
             }
         }
 
-        lastSearchResult = searchResult;
+        return giveMore10(searchResult, 0);
+    }
 
-        return searchResult;
+    private static String convertToString(ArrayList<URIInfo> result) {
+        StringBuilder resultString = new StringBuilder();
+
+        for (URIInfo uriInfo : result) {
+            String toAppend = "\n" + uriInfo.getUri().toString() + "\n" + uriInfo.getTitle() + "\n" + uriInfo.getDescription() + "\n\n";
+            resultString.append(toAppend);
+        }
+
+        System.out.println("Final Result " + resultString);
+
+        return resultString.toString();
+    }
+
+    public String giveMore10(SearchResult searchResult, int index) {
+
+        String result = convertToString(searchResult.return10(index));
+        System.out.println("Result: " + result);
+
+        return result;
     }
 
     public List<URI> searchURL(URI url) throws RemoteException {

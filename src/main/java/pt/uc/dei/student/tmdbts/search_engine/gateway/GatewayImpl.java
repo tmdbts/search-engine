@@ -174,43 +174,17 @@ public class GatewayImpl extends UnicastRemoteObject implements Gateway {
 
         List<URIInfo> result;
 
-        long startTime = System.nanoTime();
+        //long startTime = System.nanoTime();
 
-        searchResult = barrels.get("test").searchQuery(query);
+        //long endTime = System.nanoTime();
 
-        long endTime = System.nanoTime();
+        //long duration = (endTime - startTime) / 1_000_000;
 
-        long duration = (endTime - startTime) / 1_000_000;
+        //searchResult.setQueryTime(duration);
 
-        searchResult.setQueryTime(duration);
-
-        result = searchResult.return10(0);
-
-        String stringResult = convertToString(result); //chega vazio
-
-        return stringResult;
+        return barrels.get("test").searchQuery(query);
     }
 
-    public String giveMore10(int index) {
-        List<URIInfo> result = searchResult.return10(index);
-
-        return convertToString(result);
-    }
-
-
-    private static String convertToString(List<URIInfo> result) {
-
-        String resultString = "";
-
-        for (int i = 0; i < result.size(); i++) {
-
-            resultString = "URL-> " + result.get(i).getUri().toString() + "\n" + "Title-> " + result.get(i).getTitle() + "\n" + "Description-> " + result.get(i).getDescription() + "\n";
-
-            System.out.println("a");
-        }
-
-        return resultString;
-    }
 
     public List<URI> searchURL(URI url) throws RemoteException {
         return barrels.get("test").searchURL(url);
