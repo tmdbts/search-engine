@@ -89,11 +89,7 @@ public class ClientImpl extends UnicastRemoteObject {
                     admin(gateway);
 
                 } else if (query.startsWith("->")) {
-                    location = 0;
-
-                    String result = gateway.searchQuery(query.substring(2));
-
-                    System.out.println("Search results: \n" + result);
+                    System.out.println("Search results: \n" + gateway.searchQuery(query.substring(2)));
 
                 } else if (query.startsWith("$")) {
                     URI url = new URI(query.substring(1));
@@ -101,7 +97,7 @@ public class ClientImpl extends UnicastRemoteObject {
                     System.out.println("URL results: " + gateway.searchURL(url).toString());
                 } else if (query.startsWith(">")) {
                     location += 10;
-                    gateway.giveMore10(location);
+                    //gateway.giveMore10(location);
                 } else {
                     System.out.println("Unknown query: " + query);
                 }

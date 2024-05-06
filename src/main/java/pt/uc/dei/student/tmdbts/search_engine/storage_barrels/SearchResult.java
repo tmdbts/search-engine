@@ -2,7 +2,6 @@ package pt.uc.dei.student.tmdbts.search_engine.storage_barrels;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Class that represents the search results
@@ -45,12 +44,10 @@ public class SearchResult implements Serializable {
     public void addInfo(URIInfo uriInfo) {
         try {
             results.add(uriInfo);
+            System.out.println("URIINFO ADICIONADO" + uriInfo.getUri() + "\n");
         } catch (Exception e) {
             System.out.println("Error adding URIInfo: " + e.getMessage());
         }
-
-
-        System.out.println(results.size());
     }
 
     public ArrayList<URIInfo> getResults() {
@@ -73,19 +70,19 @@ public class SearchResult implements Serializable {
         return results.size();
     }
 
-    public List<URIInfo> return10(int startIndex) {
-        List<URIInfo> return10URLs = new ArrayList<>();
+    public ArrayList<URIInfo> return10(int startIndex) {
+        ArrayList<URIInfo> return10URLs = new ArrayList<>();
 
         int lastIndex = startIndex + 10;
 
-        if (lastIndex > results.size()) {
-            lastIndex = results.size() - 1;
-        }
 
         for (int i = startIndex; i < lastIndex; i++) {
-            return10URLs.add(results.get(i));
-
-            System.out.println("RESULTADOS DIGNOs " + results.get(i).getUri());
+            try {
+                return10URLs.add(results.get(i));
+                System.out.println("Url return 10 " + results.get(i).getUri() + "\n");
+            } catch (IndexOutOfBoundsException e) {
+                //System.out.print("");
+            }
         }
 
         return return10URLs;

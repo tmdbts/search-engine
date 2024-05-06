@@ -115,9 +115,10 @@ public class Index {
      */
     public List<URI> handleQuery(String query) {
         String[] splitedQuery = query.split(" ");
-
         HashMap<String, ArrayList<URI>> results = new HashMap<>();
+
         for (String word : splitedQuery) {
+
             if (index.containsKey(word)) {
                 results.put(word, index.get(word));
             }
@@ -159,6 +160,11 @@ public class Index {
                 commonURLs = new ArrayList<>(urls);
             } else {
                 commonURLs.retainAll(urls);
+                if (commonURLs.size() > 10) {
+
+                    commonURLs = new ArrayList<>(commonURLs.subList(0, 10));
+
+                }
             }
         }
 
