@@ -55,6 +55,11 @@ public class URIInfo implements Serializable {
         return uri;
     }
 
+    @Override
+    public String toString() {
+        return uri.toString() + "\n" + title + "\n" + description;
+    }
+
     public void setUri(URI uri) {
         this.uri = uri;
     }

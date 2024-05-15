@@ -227,7 +227,7 @@ public class GatewayImpl extends UnicastRemoteObject implements Gateway {
         List<URIInfo> result;
 
         long startTime = System.nanoTime();
-
+      
         searchResult = barrels.get("test").searchQuery(query);
 
         long endTime = System.nanoTime();
@@ -275,6 +275,7 @@ public class GatewayImpl extends UnicastRemoteObject implements Gateway {
 
         return resultString;
     }
+
 
     public List<URI> searchURL(URI url) throws RemoteException {
         return barrels.get("test").searchURL(url);

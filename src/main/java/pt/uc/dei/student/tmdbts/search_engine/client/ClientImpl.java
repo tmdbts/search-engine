@@ -64,6 +64,7 @@ public class ClientImpl extends UnicastRemoteObject implements Client {
 
                 if (input.equals("q")) {
                     break;
+
                 }
 
                 if (input.equals("r")) {
