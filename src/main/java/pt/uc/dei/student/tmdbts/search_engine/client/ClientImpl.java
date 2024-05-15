@@ -4,19 +4,15 @@ import pt.uc.dei.student.tmdbts.search_engine.gateway.Gateway;
 import pt.uc.dei.student.tmdbts.search_engine.storage_barrels.SearchResult;
 import pt.uc.dei.student.tmdbts.search_engine.storage_barrels.URIInfo;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.net.URI;
-import java.rmi.Naming;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.Properties;
 import java.util.Scanner;
 
 /**
  * Client implementation
  */
-public class ClientImpl extends UnicastRemoteObject {
+public class ClientImpl extends UnicastRemoteObject implements Client {
+    Monitor monitor;
 
     ClientImpl() throws RemoteException {
         super();
@@ -43,87 +39,45 @@ public class ClientImpl extends UnicastRemoteObject {
     }
 
     /**
-     * Main method
-     * <p>
-     * It starts the client and connects to the server. It then waits for user input.
-     *
-     * @param args arguments
-     */
-    public static void main(String args[]) {
-        String rootPath = System.getProperty("user.dir");
-        String appConfigPath = rootPath + "/app.properties";
-
-        int location = 0;
-
-        Properties appProps = new Properties();
-        try {
-            appProps.load(new FileInputStream(appConfigPath));
-        } catch (IOException e) {
-            System.out.println("Error loading app properties: " + e.getMessage());
-        }
-
-        try (Scanner scanner = new Scanner(System.in)) {
-            Gateway gateway = (Gateway) Naming.lookup("rmi://" + appProps.get("rmi_server_hostname") + ":" + appProps.get("rmi_server_port") + "/server");
-
-            System.out.println("Welcome to Search Engine!");
-            System.out.println();
-
-            while (true) {
-                System.out.println("Search a query: ->");
-                System.out.println("Get more results of a search: >");
-                System.out.println("Index a URL: !");
-                System.out.println("Search for a URL: $");
-                System.out.println("Open Admin page: search://status");
-                System.out.println();
-
-                String query = scanner.nextLine();
-
-                if (query.startsWith("!")) {
-                    query = query.substring(1);
-                    URI url = new URI(query);
-                    gateway.addURL(url);
-                    System.out.println("URL requested for indexing: " + query);
-
-                } else if (query.startsWith("search://status")) {
-
-                    admin(gateway);
-
-                } else if (query.startsWith("->")) {
-                    location = 0;
-
-                    String result = gateway.searchQuery(query.substring(2));
-
-                    System.out.println("Search results: \n" + result);
-
-                } else if (query.startsWith("$")) {
-                    URI url = new URI(query.substring(1));
-
-                    System.out.println("URL results: " + gateway.searchURL(url).toString());
-                } else if (query.startsWith(">")) {
-                    location += 10;
-                    gateway.giveMore10(location);
-                } else {
-                    System.out.println("Unknown query: " + query);
-                }
-
-            }
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
-    }
-
-    /**
      * Get the admin info.
      *
      * @param gateway gateway
      */
-    private static void admin(Gateway gateway) {
-        try {
-            String info = gateway.admin();
+    public void admin(Gateway gateway) {
+        Scanner scanner = new Scanner(System.in);
 
-            System.out.println(info);
+        try {
+            monitor = gateway.getMonitor();
+
+            do {
+                System.out.print("\033[H\033[2J");
+                System.out.flush();
+
+                System.out.println("Active Barrels: " + monitor.getActiveBarrels());
+                System.out.println("Average Response Time: " + monitor.getAverageResponseTime());
+                System.out.println("Top Ten Searches: " + monitor.getTopTenSearches().getTop10Searches());
+                System.out.println("Press enter to refresh the monitor");
+                System.out.println("Press q to exit");
+
+                String input = scanner.nextLine();
+                scanner.reset();
+
+                if (input.equals("q")) {
+                    break;
+                }
+
+                if (input.equals("r")) {
+                    monitor = gateway.getMonitor();
+                }
+            } while (true);
+
         } catch (RemoteException e) {
             System.out.println("Error getting admin info: " + e.getMessage());
         }
+    }
+
+    @Override
+    public void updateMonitor(MonitorUpdate monitorUpdate) {
+        monitorUpdate.updateMonitor(monitor);
     }
 }
