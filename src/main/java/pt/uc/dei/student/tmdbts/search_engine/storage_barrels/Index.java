@@ -117,8 +117,11 @@ public class Index {
         String[] splitedQuery = query.split(" ");
         HashMap<String, ArrayList<URI>> results = new HashMap<>();
 
-        for (String word : splitedQuery) {
+        if (index.isEmpty()) {
+            return new ArrayList<>();
+        }
 
+        for (String word : splitedQuery) {
             if (index.containsKey(word)) {
                 results.put(word, index.get(word));
             }
