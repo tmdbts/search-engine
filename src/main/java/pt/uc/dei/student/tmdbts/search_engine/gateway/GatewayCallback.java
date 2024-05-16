@@ -4,5 +4,5 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 
 public interface GatewayCallback extends Remote {
-    void notifyNewDataAvailable(String barrelName, String message) throws RemoteException;
+    void notifyNewDataAvailable(String name, String message) throws RemoteException;
 }

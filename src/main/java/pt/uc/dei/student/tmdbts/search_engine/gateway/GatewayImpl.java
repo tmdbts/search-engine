@@ -3,6 +3,7 @@ package pt.uc.dei.student.tmdbts.search_engine.gateway;
 import pt.uc.dei.student.tmdbts.search_engine.storage_barrels.SearchResult;
 import pt.uc.dei.student.tmdbts.search_engine.storage_barrels.StorageBarrels;
 import pt.uc.dei.student.tmdbts.search_engine.storage_barrels.URIInfo;
+import pt.uc.dei.student.tmdbts.search_engine.webserver.WebServer;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -38,6 +39,8 @@ public class GatewayImpl extends UnicastRemoteObject implements Gateway {
      */
     static HashMap<String, StorageBarrels> barrels = new HashMap<>();
 
+    static HashMap<String, WebServer> webServers = new HashMap<>();
+
     /**
      * HashMap of callbacks. The key is the barrel name and the value is the GatewayCallback object.
      */
@@ -58,26 +61,26 @@ public class GatewayImpl extends UnicastRemoteObject implements Gateway {
     /**
      * Register a barrel for callbacks
      *
-     * @param barrelName           name of the barrel
+     * @param name                 name of the barrel
      * @param callbackClientObject callback object
      * @throws RemoteException if there is an error registering the barrel
      */
-    public void registerForCallback(String barrelName, GatewayCallback callbackClientObject) throws RemoteException {
-        System.out.println("Storage Barrel " + barrelName + " registered for callbacks.");
-        callbacks.put(barrelName, callbackClientObject);
+    public void registerForCallback(String name, GatewayCallback callbackClientObject) throws RemoteException {
+        System.out.println("Server " + name + " registered for callbacks.");
+        callbacks.put(name, callbackClientObject);
     }
 
     /**
      * Unregister a barrel for callbacks
      *
-     * @param barrelName name of the barrel
+     * @param name name of the barrel
      * @throws RemoteException if there is an error unregistering the barrel
      */
-    public void unregisterForCallback(String barrelName) throws RemoteException {
-        if (callbacks.remove(barrelName) != null) {
-            System.out.println("Storage Barrel " + barrelName + " unregistered for callbacks.");
+    public void unregisterForCallback(String name) throws RemoteException {
+        if (callbacks.remove(name) != null) {
+            System.out.println("Storage Barrel " + name + " unregistered for callbacks.");
         } else {
-            System.out.println("No callback to unregister for " + barrelName);
+            System.out.println("No callback to unregister for " + name);
         }
     }
 
@@ -102,6 +105,11 @@ public class GatewayImpl extends UnicastRemoteObject implements Gateway {
         System.out.println("Barrel " + barrelName + " connected!");
         System.out.println("> ");
         barrels.put(barrelName, barrel);
+    }
+
+    public void webServer(String webServerName, WebServer webServer) throws RemoteException {
+
+        webServers.put(webServerName, webServer);
     }
 
     /**
@@ -182,12 +190,12 @@ public class GatewayImpl extends UnicastRemoteObject implements Gateway {
 
         //searchResult.setQueryTime(duration);
 
-        return barrels.get("test").searchQuery(query);
+        return barrels.get("Storage Barrels").searchQuery(query);
     }
 
 
     public List<URI> searchURL(URI url) throws RemoteException {
-        return barrels.get("test").searchURL(url);
+        return barrels.get("Storage Barrels").searchURL(url);
     }
 
     /**
@@ -203,7 +211,7 @@ public class GatewayImpl extends UnicastRemoteObject implements Gateway {
         stringBuilder.append(getBarrels());
 
         try {
-            stringBuilder.append(barrels.get("test").getTopSearches());
+            stringBuilder.append(barrels.get("Storage Barrels").getTopSearches());
         } catch (RemoteException e) {
             System.out.println("Error getting top searches: " + e.getMessage());
         }
