@@ -1,5 +1,8 @@
 package pt.uc.dei.student.tmdbts.search_engine.gateway;
 
+import pt.uc.dei.student.tmdbts.search_engine.client.Client;
+import pt.uc.dei.student.tmdbts.search_engine.client.Monitor;
+import pt.uc.dei.student.tmdbts.search_engine.client.MonitorUpdate;
 import pt.uc.dei.student.tmdbts.search_engine.storage_barrels.SearchResult;
 import pt.uc.dei.student.tmdbts.search_engine.storage_barrels.StorageBarrels;
 import pt.uc.dei.student.tmdbts.search_engine.storage_barrels.URIInfo;
@@ -13,40 +16,51 @@ import java.rmi.Naming;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Properties;
-import java.util.Scanner;
+import java.util.*;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
 /**
  * GatewayImpl class
  * <p>
  * The GatewayImpl class is responsible for the Gateway implementation.
- * It is responsible for managing the queue of URLs to be indexed, the barrels and the callbacks.
- * It also provides methods to add URLs to the queue, get the next URL from the queue, check if the queue is empty,
- * get the size of the queue, print the queue, search by a query, print the information panel, register a barrel for
- * callbacks, unregister a barrel for callbacks and print a message on the server.
+ * It is responsible for managing the queue of URLs to be indexed, the barrels
+ * and the callbacks.
+ * It also provides methods to add URLs to the queue, get the next URL from the
+ * queue, check if the queue is empty,
+ * get the size of the queue, print the queue, search by a query, print the
+ * information panel, register a barrel for
+ * callbacks, unregister a barrel for callbacks and print a message on the
+ * server.
  */
 public class GatewayImpl extends UnicastRemoteObject implements Gateway {
     /**
-     * Queue of URLs to be indexed. ConcurrentLinkedDeque is used to allow multiple threads to access the queue.
+     * Queue of URLs to be indexed. ConcurrentLinkedDeque is used to allow multiple
+     * threads to access the queue.
      */
     private ConcurrentLinkedDeque<URI> queue = new ConcurrentLinkedDeque<>();
 
     /**
-     * HashMap of barrels. The key is the barrel name and the value is the StorageBarrels object.
+     * HashMap of barrels. The key is the barrel name and the value is the
+     * StorageBarrels object.
      */
-    static HashMap<String, StorageBarrels> barrels = new HashMap<>();
+    private static HashMap<String, StorageBarrels> barrels = new HashMap<>();
+
+    private static HashMap<Integer, Client> clients = new HashMap<>();
 
     static HashMap<String, WebServer> webServers = new HashMap<>();
 
     /**
-     * HashMap of callbacks. The key is the barrel name and the value is the GatewayCallback object.
+     * HashMap of callbacks. The key is the barrel name and the value is the
+     * GatewayCallback object.
      */
     private final HashMap<String, GatewayCallback> callbacks = new HashMap<>();
 
-    private static StorageBarrels storageBarrels;
+    private TopTenSearches topTenSearches = new TopTenSearches();
+
+    private long averageResponseTime = 0;
+
+    private int serachCounter = 0;
+
     private SearchResult searchResult;
 
     /**
@@ -85,6 +99,25 @@ public class GatewayImpl extends UnicastRemoteObject implements Gateway {
     }
 
     /**
+     * Register a client for callbacks
+     *
+     * @param id     client id
+     * @param client client object
+     * @throws RemoteException if there is an error registering the client
+     */
+    public void registerForCallback(int id, Client client) throws RemoteException {
+        clients.put(id, client);
+    }
+
+    public void unregisterForCallback(int id) throws RemoteException {
+        if (clients.remove(id) != null) {
+            System.out.println("Client " + id + " unregistered for callbacks.");
+        } else {
+            System.out.println("No callback to unregister for " + id);
+        }
+    }
+
+    /**
      * Print a message on the server
      *
      * @param s message to print
@@ -105,6 +138,25 @@ public class GatewayImpl extends UnicastRemoteObject implements Gateway {
         System.out.println("Barrel " + barrelName + " connected!");
         System.out.println("> ");
         barrels.put(barrelName, barrel);
+
+        ArrayList<String> activeBarrelsNames = new ArrayList<>(barrels.keySet());
+
+        MonitorUpdate monitor = new MonitorUpdate(activeBarrelsNames, averageResponseTime);
+    }
+
+    /**
+     * Get system information
+     * <p>
+     * The included information is the top 10 searches, active barrels and the average response time
+     *
+     * @return system information
+     * @throws RemoteException if there is an error getting the system information
+     */
+    @Override
+    public Monitor getMonitor() throws RemoteException {
+        ArrayList<String> activeBarrelsNames = new ArrayList<>(barrels.keySet());
+
+        return new Monitor(topTenSearches, activeBarrelsNames, averageResponseTime);
     }
 
     public void webServer(String webServerName, WebServer webServer) throws RemoteException {
@@ -182,41 +234,59 @@ public class GatewayImpl extends UnicastRemoteObject implements Gateway {
 
         List<URIInfo> result;
 
-        //long startTime = System.nanoTime();
+        long startTime = System.nanoTime();
+      
+        searchResult = barrels.get("test").searchQuery(query);
 
-        //long endTime = System.nanoTime();
+        long endTime = System.nanoTime();
 
-        //long duration = (endTime - startTime) / 1_000_000;
+        long duration = (endTime - startTime) / 1_000_000;
 
-        //searchResult.setQueryTime(duration);
+        searchResult.setQueryTime(duration);
 
-        return barrels.get("Storage Barrels").searchQuery(query);
+        result = searchResult.return10(0);
+
+        averageResponseTime = (averageResponseTime * (serachCounter++) + duration) / serachCounter;
+
+        topTenSearches.addSearchQueryFrequency(query);
+
+        HashMap<Integer, String> resultTop = topTenSearches.didTopChange();
+
+        MonitorUpdate monitor = new MonitorUpdate(topTenSearches, averageResponseTime);
+
+        if (resultTop != null) {
+            for (Client client : clients.values()) {
+                client.updateMonitor(monitor);
+            }
+        }
+
+        return convertToString(result);
+    }
+
+    public String giveMore10(int index) {
+        List<URIInfo> result = searchResult.return10(index);
+
+        return convertToString(result);
+    }
+
+    private static String convertToString(List<URIInfo> result) {
+
+        String resultString = "";
+
+        for (int i = 0; i < result.size(); i++) {
+
+            resultString = "URL-> " + result.get(i).getUri().toString() + "\n" + "Title-> " + result.get(i).getTitle()
+                    + "\n" + "Description-> " + result.get(i).getDescription() + "\n";
+
+            System.out.println("a");
+        }
+
+        return resultString;
     }
 
 
     public List<URI> searchURL(URI url) throws RemoteException {
-        return barrels.get("Storage Barrels").searchURL(url);
-    }
-
-    /**
-     * Print the information panel
-     *
-     * @return information panel
-     */
-    public String admin() {
-        StringBuilder stringBuilder = new StringBuilder();
-
-//        System.out.println("B:" + getBarrels());
-
-        stringBuilder.append(getBarrels());
-
-        try {
-            stringBuilder.append(barrels.get("Storage Barrels").getTopSearches());
-        } catch (RemoteException e) {
-            System.out.println("Error getting top searches: " + e.getMessage());
-        }
-
-        return stringBuilder.toString();
+        return barrels.get("test").searchURL(url);
     }
 
     /**
