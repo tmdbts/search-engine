@@ -104,7 +104,7 @@ public class Message {
         String[] splitMessage = messageBody.split(";");
 
         for (String field : splitMessage) {
-            if (field.isBlank()) continue;
+            if (field.isEmpty()) continue;
 
             String[] keyValuePair = field.split("\\|");
 
@@ -138,7 +138,7 @@ public class Message {
                     break;
                 }
 
-                String encodedItem = encodeListItem(list.removeFirst(), listName, i);
+                String encodedItem = encodeListItem(list.remove(0), listName, i);
 
                 if (message.length() + encodedItem.length() >= MAX_UDP_MESSAGE_SIZE - 2) {
                     message.append('\n');
