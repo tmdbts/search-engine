@@ -1,5 +1,7 @@
 package pt.uc.dei.student.tmdbts.search_engine.gateway;
 
+import pt.uc.dei.student.tmdbts.search_engine.client.Client;
+import pt.uc.dei.student.tmdbts.search_engine.client.Monitor;
 import pt.uc.dei.student.tmdbts.search_engine.storage_barrels.StorageBarrels;
 
 import java.net.URI;
@@ -19,7 +21,13 @@ public interface Gateway extends Remote {
 
     void unregisterForCallback(String barrelName) throws RemoteException;
 
+    void registerForCallback(int id, Client client) throws RemoteException;
+
+    void unregisterForCallback(int id) throws RemoteException;
+
     String searchQuery(String query) throws RemoteException;
+
+    String giveMore10(int index) throws RemoteException;
 
     List<URI> searchURL(URI url) throws RemoteException;
 
@@ -33,5 +41,5 @@ public interface Gateway extends Remote {
 
     int queueSize() throws RemoteException;
 
-    String admin() throws RemoteException;
+    Monitor getMonitor() throws RemoteException;
 }
