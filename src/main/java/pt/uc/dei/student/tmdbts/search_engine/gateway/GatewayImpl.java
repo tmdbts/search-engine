@@ -59,9 +59,7 @@ public class GatewayImpl extends UnicastRemoteObject implements Gateway {
 
     private long averageResponseTime = 0;
 
-    private int serachCounter = 0;
-
-    private SearchResult searchResult;
+    private int searchCounter = 0;
 
     /**
      * Constructor
@@ -107,6 +105,8 @@ public class GatewayImpl extends UnicastRemoteObject implements Gateway {
      */
     public void registerForCallback(int id, Client client) throws RemoteException {
         clients.put(id, client);
+
+        System.out.println("Client " + id + " registered for callbacks.");
     }
 
     public void unregisterForCallback(int id) throws RemoteException {
@@ -229,14 +229,12 @@ public class GatewayImpl extends UnicastRemoteObject implements Gateway {
      * @return search result
      * @throws RemoteException if there is an error searching
      */
-    public String searchQuery(String query) throws RemoteException {
+    public SearchResult searchQuery(String query) throws RemoteException {
         System.out.println("Searching results for the requested query: " + query);
 
-        List<URIInfo> result;
-
         long startTime = System.nanoTime();
-      
-        searchResult = barrels.get("test").searchQuery(query);
+
+        SearchResult searchResult = barrels.get("test").searchQuery(query);
 
         long endTime = System.nanoTime();
 
@@ -244,9 +242,44 @@ public class GatewayImpl extends UnicastRemoteObject implements Gateway {
 
         searchResult.setQueryTime(duration);
 
-        result = searchResult.return10(0);
+        averageResponseTime = (averageResponseTime * (searchCounter++) + duration) / searchCounter;
 
-        averageResponseTime = (averageResponseTime * (serachCounter++) + duration) / serachCounter;
+        topTenSearches.addSearchQueryFrequency(query);
+
+        HashMap<Integer, String> resultTop = topTenSearches.didTopChange();
+
+        MonitorUpdate monitor = new MonitorUpdate(topTenSearches, averageResponseTime);
+
+        System.out.println("Sending monitor update to clients");
+
+        if (resultTop != null) {
+            for (Map.Entry<Integer, Client> entry : clients.entrySet()) {
+                Integer id = entry.getKey();
+                Client client = entry.getValue();
+
+                System.out.println("Sending monitor update to client " + id);
+                client.updateMonitor(monitor);
+                System.out.println("Monitor update sent to client " + id);
+            }
+        }
+
+        return searchResult;
+    }
+
+    public SearchResult searchQuery(String query, int offset) throws RemoteException {
+        System.out.println("Searching results for the requested query: " + query + " with offset: " + offset);
+
+        long startTime = System.nanoTime();
+
+        SearchResult searchResult = barrels.get("test").searchQuery(query, offset);
+
+        long endTime = System.nanoTime();
+
+        long duration = (endTime - startTime) / 1_000_000;
+
+        searchResult.setQueryTime(duration);
+
+        averageResponseTime = (averageResponseTime * (searchCounter++) + duration) / searchCounter;
 
         topTenSearches.addSearchQueryFrequency(query);
 
@@ -260,13 +293,7 @@ public class GatewayImpl extends UnicastRemoteObject implements Gateway {
             }
         }
 
-        return convertToString(result);
-    }
-
-    public String giveMore10(int index) {
-        List<URIInfo> result = searchResult.return10(index);
-
-        return convertToString(result);
+        return searchResult;
     }
 
     private static String convertToString(List<URIInfo> result) {

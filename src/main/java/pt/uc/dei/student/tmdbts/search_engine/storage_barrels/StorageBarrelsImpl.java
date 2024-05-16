@@ -156,21 +156,52 @@ public class StorageBarrelsImpl extends UnicastRemoteObject implements StorageBa
      * @param query Term to add
      */
     @Override
-    public String searchQuery(String query) throws RemoteException {
+    public SearchResult searchQuery(String query) throws RemoteException {
         List<URI> indexResults = index.handleQuery(query);
         SearchResult searchResult = new SearchResult();
+
         for (URI result : indexResults) {
-            System.out.println("Result uri " + result);
+            if (searchResult.getResults().size() >= 10) {
+                break;
+            }
+
             for (URIInfo uriInfo : urlInformation) {
-                System.out.println("equals result " + uriInfo.getUri().equals(result));
                 if (uriInfo.getUri().equals(result)) {
-                    System.out.println("Found URI: " + uriInfo.getUri() + "\n");
                     searchResult.addInfo(uriInfo);
+
+                    break;
                 }
             }
         }
 
-        return giveMore10(searchResult, 0);
+        return searchResult;
+    }
+
+    /**
+     * Search by query
+     *
+     * @param query  Term to add
+     * @param offset Offset
+     */
+    public SearchResult searchQuery(String query, int offset) throws RemoteException {
+        List<URI> indexResults = index.handleQuery(query);
+        SearchResult searchResult = new SearchResult();
+
+        for (URI result : indexResults.subList(offset, indexResults.size())) {
+            if (searchResult.getResults().size() >= 10) {
+                break;
+            }
+
+            for (URIInfo uriInfo : urlInformation) {
+                if (uriInfo.getUri().equals(result)) {
+                    searchResult.addInfo(uriInfo);
+
+                    break;
+                }
+            }
+        }
+
+        return searchResult;
     }
 
     private static String convertToString(ArrayList<URIInfo> result) {

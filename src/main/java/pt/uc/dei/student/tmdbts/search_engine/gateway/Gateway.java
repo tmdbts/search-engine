@@ -2,6 +2,7 @@ package pt.uc.dei.student.tmdbts.search_engine.gateway;
 
 import pt.uc.dei.student.tmdbts.search_engine.client.Client;
 import pt.uc.dei.student.tmdbts.search_engine.client.Monitor;
+import pt.uc.dei.student.tmdbts.search_engine.storage_barrels.SearchResult;
 import pt.uc.dei.student.tmdbts.search_engine.storage_barrels.StorageBarrels;
 import pt.uc.dei.student.tmdbts.search_engine.webserver.WebServer;
 
@@ -28,9 +29,9 @@ public interface Gateway extends Remote {
 
     void unregisterForCallback(int id) throws RemoteException;
 
-    String searchQuery(String query) throws RemoteException;
+    SearchResult searchQuery(String query) throws RemoteException;
 
-    String giveMore10(int index) throws RemoteException;
+    SearchResult searchQuery(String query, int offset) throws RemoteException;
 
     List<URI> searchURL(URI url) throws RemoteException;
 
