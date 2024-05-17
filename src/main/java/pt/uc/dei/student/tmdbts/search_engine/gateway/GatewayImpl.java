@@ -6,7 +6,6 @@ import pt.uc.dei.student.tmdbts.search_engine.client.MonitorUpdate;
 import pt.uc.dei.student.tmdbts.search_engine.storage_barrels.SearchResult;
 import pt.uc.dei.student.tmdbts.search_engine.storage_barrels.StorageBarrels;
 import pt.uc.dei.student.tmdbts.search_engine.storage_barrels.URIInfo;
-import pt.uc.dei.student.tmdbts.search_engine.webserver.WebServer;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -46,9 +45,6 @@ public class GatewayImpl extends UnicastRemoteObject implements Gateway {
     private static HashMap<String, StorageBarrels> barrels = new HashMap<>();
 
     private static HashMap<Integer, Client> clients = new HashMap<>();
-
-    static HashMap<String, WebServer> webServers = new HashMap<>();
-
     /**
      * HashMap of callbacks. The key is the barrel name and the value is the
      * GatewayCallback object.
@@ -157,11 +153,6 @@ public class GatewayImpl extends UnicastRemoteObject implements Gateway {
         ArrayList<String> activeBarrelsNames = new ArrayList<>(barrels.keySet());
 
         return new Monitor(topTenSearches, activeBarrelsNames, averageResponseTime);
-    }
-
-    public void webServer(String webServerName, WebServer webServer) throws RemoteException {
-
-        webServers.put(webServerName, webServer);
     }
 
     /**
