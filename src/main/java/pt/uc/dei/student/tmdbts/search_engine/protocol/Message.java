@@ -99,22 +99,9 @@ public class Message {
      * @param messageBody The body of the message
      */
     public void parseMessage(String messageBody) {
-        HashMap<String, String> messageMap = new HashMap<>();
-
-        String[] splitMessage = messageBody.split(";");
-
-        for (String field : splitMessage) {
-            if (field.isEmpty()) continue;
-
-            String[] keyValuePair = field.split("\\|");
-
-            messageMap.put(keyValuePair[0].trim(), keyValuePair[1].trim());
-        }
-
-        bodyMap = messageMap;
-
-        findListProperties(messageMap);
-        parseList(messageMap);
+        bodyMap = generateMessageMap(messageBody);
+        findListProperties(bodyMap);
+        parseList(bodyMap);
     }
 
     /**
@@ -221,6 +208,29 @@ public class Message {
         return listName + "_" + index + "_name" + " | " + item + " ; ";
     }
 
+    private HashMap<String, String> generateMessageMap(String messageBody) {
+        HashMap<String, String> messageMap = new HashMap<>();
+
+        String[] splitMessage = messageBody.split(";");
+
+        for (String field : splitMessage) {
+            if (field.isEmpty() || field.isBlank()) continue;
+
+            String[] keyValuePair = field.split("\\|");
+
+            if (keyValuePair.length != 2) {
+                continue;
+            }
+
+            if (keyValuePair[0].isBlank() || keyValuePair[0].isEmpty() || keyValuePair[1].isBlank() || keyValuePair[1].isEmpty())
+                continue;
+
+            messageMap.put(keyValuePair[0].trim(), keyValuePair[1].trim());
+        }
+
+        return messageMap;
+    }
+
     /**
      * Find the list length and name properties
      *
@@ -229,8 +239,6 @@ public class Message {
      */
     private boolean findListProperties(HashMap<String, String> messageMap) {
         if (!containsList(messageMap)) return false;
-
-//        System.out.println("DEBUG " + messageMap); //mesage map sem type para a meta data
 
         for (String key : messageMap.keySet()) {
             if (list != null && type != null) {
@@ -246,12 +254,12 @@ public class Message {
 
             if (key.equals("type")) {
                 type = RequestTypes.fromString(messageMap.get(key).trim());
-//                System.out.println("HERE " + type);
             }
         }
 
         return false;
     }
+
 
     /**
      * Check if the message contains a list
@@ -297,6 +305,8 @@ public class Message {
                 list.add(messageMap.get(key));
             }
         }
+
+        System.out.println(list);
     }
 
     public RequestTypes getType() {
@@ -339,7 +349,7 @@ public class Message {
         this.listLength = listLength;
     }
 
-    public String getListName() {
+    public String getListName( {
         return listName;
     }
 
