@@ -1,11 +1,29 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Search Results</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-<h1>Search Results for Query</h1>
-<p th:text="${results}"></p>
-<a href="/">Back to Home</a>
+<div class="container">
+    <h1>Search Results</h1>
+    <div th:if="${result != null}">
+        <p>Query Time: <span th:text="${result.queryTime}"></span> ms</p>
+        <ul>
+            <li th:each="urlInfo : ${result.results}">
+                <p>URL: <a th:href="${urlInfo.uri}" th:text="${urlInfo.uri}"></a></p>
+                <p>Title: <span th:text="${urlInfo.title}"></span></p>
+                <p>Description: <span th:text="${urlInfo.description}"></span></p>
+            </li>
+        </ul>
+    </div>
+    <div th:if="${result == null}">
+        <p>No results found.</p>
+    </div>
+    <a href="/" class="btn btn-primary">Back to Home</a>
+</div>
 </body>
 </html>

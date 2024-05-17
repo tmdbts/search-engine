@@ -23,7 +23,7 @@ public class ClientImpl extends UnicastRemoteObject implements Client {
 
     private int lastOffset = 0;
 
-    ClientImpl() throws RemoteException {
+    protected ClientImpl() throws RemoteException {
         super();
     }
 
