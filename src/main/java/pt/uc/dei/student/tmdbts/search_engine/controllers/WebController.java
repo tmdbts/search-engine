@@ -37,6 +37,6 @@ public class WebController {
             e.printStackTrace();
             model.addAttribute("result", "Error occurred: " + e.getMessage());
         }
-        return "search";
+        return "redirect:/search";
     }
 }
