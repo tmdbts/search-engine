@@ -349,7 +349,7 @@ public class Message {
         this.listLength = listLength;
     }
 
-    public String getListName( {
+    public String getListName() {
         return listName;
     }
 
