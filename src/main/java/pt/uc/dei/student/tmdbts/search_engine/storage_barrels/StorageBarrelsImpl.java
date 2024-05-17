@@ -111,6 +111,7 @@ public class StorageBarrelsImpl extends UnicastRemoteObject implements StorageBa
 
     public void handleMessage(String inComingMessage) {
         Message message = new Message(inComingMessage);
+
         message.parseMessage(inComingMessage);
 
         if (message.getType() == null) {
