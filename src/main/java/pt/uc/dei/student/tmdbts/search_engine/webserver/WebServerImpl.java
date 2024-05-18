@@ -18,6 +18,8 @@ public class WebServerImpl extends UnicastRemoteObject implements Client, Gatewa
 
     private Gateway gateway;
 
+    String querySearch;
+
     public WebServerImpl() throws RemoteException {
         super();
     }
@@ -42,7 +44,12 @@ public class WebServerImpl extends UnicastRemoteObject implements Client, Gatewa
     }
 
     public SearchResult searchQuery(String query) throws RemoteException {
+        querySearch = query;
         return gateway.searchQuery(query);
+    }
+
+    public SearchResult searchQuery(int index) throws RemoteException {
+        return gateway.searchQuery(querySearch, index);
     }
 
     public void addURL(URI url) throws RemoteException {
