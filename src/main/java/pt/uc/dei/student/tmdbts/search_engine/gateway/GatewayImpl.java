@@ -45,7 +45,8 @@ public class GatewayImpl extends UnicastRemoteObject implements Gateway {
     private static HashMap<String, StorageBarrels> barrels = new HashMap<>();
 
     private static HashMap<Integer, Client> clients = new HashMap<>();
-    /**
+
+    /*
      * HashMap of callbacks. The key is the barrel name and the value is the
      * GatewayCallback object.
      */
