@@ -13,7 +13,7 @@
     <div th:if="${result != null}">
         <p>Query Time: <span th:text="${result.queryTime}"></span> ms</p>
         <ul>
-            <li th:each="urlInfo : ${result.results}">
+            <li th:each="urlInfo : ${url}">
                 <p>URL: <a th:href="${urlInfo.uri}" th:text="${urlInfo.uri}"></a></p>
                 <p>Title: <span th:text="${urlInfo.title}"></span></p>
                 <p>Description: <span th:text="${urlInfo.description}"></span></p>
@@ -22,6 +22,14 @@
     </div>
     <div th:if="${result == null}">
         <p>No results found.</p>
+    </div>
+    <div class="navigation-buttons">
+        <button class="btn btn-secondary" th:if="${pageIndex > 0}"
+                th:href="@{/search(query=${query.query}, pageIndex=${pageIndex -1})}">Previous
+        </button>
+        <button class="btn btn-secondary" th:if="${paginatedResults != null}"
+                th:href="@{/search(query=${query.query}, pageIndex=${pageIndex + 1})}">Next
+        </button>
     </div>
     <a href="/" class="btn btn-primary">Back to Home</a>
 </div>
