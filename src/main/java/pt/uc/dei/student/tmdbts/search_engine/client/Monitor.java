@@ -2,9 +2,10 @@ package pt.uc.dei.student.tmdbts.search_engine.client;
 
 import pt.uc.dei.student.tmdbts.search_engine.gateway.TopTenSearches;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Monitor implements java.io.Serializable {
+public class Monitor implements Serializable {
     private TopTenSearches topTenSearches;
 
     private ArrayList<String> activeBarrels;
