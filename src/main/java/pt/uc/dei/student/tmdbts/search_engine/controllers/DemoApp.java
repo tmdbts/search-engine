@@ -11,7 +11,6 @@ import java.rmi.RemoteException;
 @SpringBootApplication
 @ComponentScan(basePackages = "pt.uc.dei.student.tmdbts.search_engine")
 public class DemoApp {
-
     @Bean
     public WebServerImpl webServerImpl() throws RemoteException {
         WebServerImpl webServerImpl = new WebServerImpl();

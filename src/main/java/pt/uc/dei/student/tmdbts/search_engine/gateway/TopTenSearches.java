@@ -1,8 +1,9 @@
 package pt.uc.dei.student.tmdbts.search_engine.gateway;
 
+import java.io.Serializable;
 import java.util.HashMap;
 
-public class TopTenSearches implements java.io.Serializable {
+public class TopTenSearches implements Serializable {
     private HashMap<String, Integer> searchQueryFrequency = new HashMap<>();
 
     private HashMap<Integer, String> top10Searches = new HashMap<>();
