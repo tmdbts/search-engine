@@ -45,10 +45,6 @@ const displayMonitor = (monitor) => {
 }
 
 $(function () {
-    $("form").on('submit', function (e) {
-        e.preventDefault();
-    });
-
     $("#navigateToMonitor").click((e) => {
         window.location.href = "/monitor";
     });

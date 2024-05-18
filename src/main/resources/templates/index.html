@@ -73,6 +73,7 @@
             <input type="text" th:field="*{query}" class="form-control" name="query" placeholder="Enter search query">
         </label>
         <button th:href="@{/search}" class="btn btn-outline-secondary mt-3 btn-light" type="submit">Search</button>
+        <button th:ref="@{/search}" class="btn btn-outline-secondary mt-3 btn-dark" type="submit">Index</button>
     </div>
 </form>
 </body>
