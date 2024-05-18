@@ -164,7 +164,7 @@ public class ClientImpl extends UnicastRemoteObject implements Client {
     @Override
     public void updateMonitor(MonitorUpdate monitorUpdate) {
         System.out.println("Updating monitor");
-        //monitorUpdate.updateMonitor(monitor);
+        monitorUpdate.updateMonitor(monitor);
     }
 
 

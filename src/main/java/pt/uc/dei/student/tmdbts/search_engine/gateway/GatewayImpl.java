@@ -253,7 +253,7 @@ public class GatewayImpl extends UnicastRemoteObject implements Gateway {
                 Client client = entry.getValue();
 
                 System.out.println("Sending monitor update to client " + id);
-                client.updateMonitor(monitor);
+                //client.updateMonitor(monitor);
                 System.out.println("Monitor update sent to client " + id);
             }
         }
