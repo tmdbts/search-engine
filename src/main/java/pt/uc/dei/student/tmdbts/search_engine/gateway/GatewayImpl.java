@@ -43,6 +43,10 @@ public class GatewayImpl extends UnicastRemoteObject implements Gateway {
      */
     private static HashMap<String, StorageBarrels> barrels = new HashMap<>();
 
+    /**
+     * HashMap of clients. The key is the client id and the value is the Client
+     * object.
+     */
     private static HashMap<Integer, Client> clients = new HashMap<>();
 
     /*
@@ -51,10 +55,19 @@ public class GatewayImpl extends UnicastRemoteObject implements Gateway {
      */
     private final HashMap<String, GatewayCallback> callbacks = new HashMap<>();
 
+    /**
+     * Top ten searches
+     */
     private TopTenSearches topTenSearches = new TopTenSearches();
 
+    /**
+     * Average response time
+     */
     private long averageResponseTime = 0;
 
+    /**
+     * Search counter
+     */
     private int searchCounter = 0;
 
     /**
@@ -105,6 +118,12 @@ public class GatewayImpl extends UnicastRemoteObject implements Gateway {
         System.out.println("Client " + id + " registered for callbacks.");
     }
 
+    /**
+     * Unregister a client for callbacks
+     *
+     * @param id client id
+     * @throws RemoteException if there is an error unregistering the client
+     */
     public void unregisterForCallback(int id) throws RemoteException {
         if (clients.remove(id) != null) {
             System.out.println("Client " + id + " unregistered for callbacks.");
@@ -261,6 +280,14 @@ public class GatewayImpl extends UnicastRemoteObject implements Gateway {
         return searchResult;
     }
 
+    /**
+     * Search by a query and offset
+     *
+     * @param query  query to search
+     * @param offset offset
+     * @return search result
+     * @throws RemoteException if there is an error searching
+     */
     public SearchResult searchQuery(String query, int offset) throws RemoteException {
         System.out.println("Searching results for the requested query: " + query + " with offset: " + offset);
 
@@ -291,6 +318,13 @@ public class GatewayImpl extends UnicastRemoteObject implements Gateway {
         return searchResult;
     }
 
+    /**
+     * Search by URL
+     *
+     * @param url URL to search
+     * @return list of URIs
+     * @throws RemoteException if there is an error searching
+     */
     public List<URI> searchURL(URI url) throws RemoteException {
         return barrels.get("test").searchURL(url);
     }

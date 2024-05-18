@@ -4,6 +4,9 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.util.List;
 
+/**
+ * This represents a Hacker News item.
+ */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public record HackerNews(
         Integer id, // The item's unique id.
