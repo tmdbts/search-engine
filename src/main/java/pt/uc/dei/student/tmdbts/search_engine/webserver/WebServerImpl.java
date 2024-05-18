@@ -7,6 +7,7 @@ import pt.uc.dei.student.tmdbts.search_engine.gateway.GatewayCallback;
 import pt.uc.dei.student.tmdbts.search_engine.storage_barrels.SearchResult;
 
 import java.io.FileInputStream;
+import java.net.URI;
 import java.rmi.Naming;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
@@ -42,6 +43,10 @@ public class WebServerImpl extends UnicastRemoteObject implements Client, Gatewa
 
     public SearchResult searchQuery(String query) throws RemoteException {
         return gateway.searchQuery(query);
+    }
+
+    public void addURL(URI url) throws RemoteException {
+        gateway.addURL(url);
     }
 
     public static void main(String[] args) throws RemoteException {

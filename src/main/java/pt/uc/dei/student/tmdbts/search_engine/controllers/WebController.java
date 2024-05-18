@@ -10,10 +10,15 @@ import pt.uc.dei.student.tmdbts.search_engine.models.Query;
 import pt.uc.dei.student.tmdbts.search_engine.storage_barrels.SearchResult;
 import pt.uc.dei.student.tmdbts.search_engine.webserver.WebServerImpl;
 
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.rmi.RemoteException;
+
 @Controller
 public class WebController {
 
     private final WebServerImpl webServer;
+    private SearchResult searchResult;
 
     @Autowired
     public WebController(WebServerImpl webServer) {
@@ -27,16 +32,46 @@ public class WebController {
     }
 
     @PostMapping("/search")
-    public String searchUrl(@ModelAttribute Query query, Model model) {
+    public String searchUrl(@ModelAttribute Query query, Model model) throws RemoteException {
         String queryStr = query.getQuery();
         System.out.println("Query: " + queryStr);
+        if (queryStr.startsWith("https://")) {
+            URI url = null;
+            try {
+                url = new URI(queryStr);
+            } catch (URISyntaxException e) {
+                System.out.println("INVALID URL: " + queryStr);
+                return "index";
+            }
+            if (url != null) {
+                webServer.addURL(url);
+                return "index";
+            }
+        } else {
+            try {
+                searchResult = webServer.searchQuery(queryStr);
+                model.addAttribute("result", searchResult);
+                model.addAttribute("url", searchResult.return10(0));
+                return "search";
+            } catch (Exception e) {
+                e.printStackTrace();
+                model.addAttribute("result", "Error occurred: " + e.getMessage());
+                return "search";
+            }
+        }
+        return "index";
+    }
+
+    /*@GetMapping("/search")
+    public String searchMore10(@RequestParam(name = "pageIndex") int pageIndex, Model model) throws RemoteException {
         try {
-            SearchResult searchResult = webServer.searchQuery(queryStr);
+            ArrayList<URIInfo> paginatedResults = searchResult.return10(pageIndex);
             model.addAttribute("result", searchResult);
+            model.addAttribute("url", paginatedResults);
         } catch (Exception e) {
             e.printStackTrace();
             model.addAttribute("result", "Error occurred: " + e.getMessage());
         }
         return "search";
-    }
+    }*/
 }
