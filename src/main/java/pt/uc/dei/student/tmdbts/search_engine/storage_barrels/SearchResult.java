@@ -65,4 +65,8 @@ public class SearchResult implements Serializable {
     public void setQueryTime(long queryTime) {
         this.queryTime = queryTime;
     }
+
+    public int getTotal_results() {
+        return results.size();
+    }
 }
