@@ -116,9 +116,6 @@ public class StorageBarrelsImpl extends UnicastRemoteObject implements StorageBa
 
         if (message.getType() == null) {
             System.out.println("Invalid message type");
-            System.out.println("Body message: " + message.getBody());
-            System.out.println();
-            System.out.println("Body map: " + message.getBodyMap());
         }
 
         switch (message.getType()) {
@@ -203,27 +200,6 @@ public class StorageBarrelsImpl extends UnicastRemoteObject implements StorageBa
         }
 
         return searchResult;
-    }
-
-    private static String convertToString(ArrayList<URIInfo> result) {
-        StringBuilder resultString = new StringBuilder();
-
-        for (URIInfo uriInfo : result) {
-            String toAppend = "\n" + uriInfo.getUri().toString() + "\n" + uriInfo.getTitle() + "\n" + uriInfo.getDescription() + "\n\n";
-            resultString.append(toAppend);
-        }
-
-        System.out.println("Final Result " + resultString);
-
-        return resultString.toString();
-    }
-
-    public String giveMore10(SearchResult searchResult, int index) {
-
-        String result = convertToString(searchResult.return10(index));
-        System.out.println("Result: " + result);
-
-        return result;
     }
 
     public List<URI> searchURL(URI url) throws RemoteException {

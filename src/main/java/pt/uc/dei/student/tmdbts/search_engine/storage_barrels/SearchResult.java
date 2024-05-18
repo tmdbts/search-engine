@@ -65,26 +65,4 @@ public class SearchResult implements Serializable {
     public void setQueryTime(long queryTime) {
         this.queryTime = queryTime;
     }
-
-    public int getTotal_results() {
-        return results.size();
-    }
-
-    public ArrayList<URIInfo> return10(int startIndex) {
-        ArrayList<URIInfo> return10URLs = new ArrayList<>();
-
-        int lastIndex = startIndex + 10;
-
-
-        for (int i = startIndex; i < lastIndex; i++) {
-            try {
-                return10URLs.add(results.get(i));
-                System.out.println("Url return 10 " + results.get(i).getUri() + "\n");
-            } catch (IndexOutOfBoundsException e) {
-                //System.out.print("");
-            }
-        }
-
-        return return10URLs;
-    }
 }

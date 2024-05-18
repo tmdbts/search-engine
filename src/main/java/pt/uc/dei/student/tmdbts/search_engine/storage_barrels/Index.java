@@ -100,7 +100,6 @@ public class Index {
         URI url = URI.create(message.getBodyMap().get("url"));
 
         return new URIInfo(url, message.getBodyMap().get("meta_0_name"), message.getBodyMap().get("meta_1_name"));
-
     }
 
     /**

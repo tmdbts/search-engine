@@ -5,7 +5,6 @@ import pt.uc.dei.student.tmdbts.search_engine.client.Monitor;
 import pt.uc.dei.student.tmdbts.search_engine.client.MonitorUpdate;
 import pt.uc.dei.student.tmdbts.search_engine.storage_barrels.SearchResult;
 import pt.uc.dei.student.tmdbts.search_engine.storage_barrels.StorageBarrels;
-import pt.uc.dei.student.tmdbts.search_engine.storage_barrels.URIInfo;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -152,7 +151,11 @@ public class GatewayImpl extends UnicastRemoteObject implements Gateway {
     public Monitor getMonitor() throws RemoteException {
         ArrayList<String> activeBarrelsNames = new ArrayList<>(barrels.keySet());
 
-        return new Monitor(topTenSearches, activeBarrelsNames, averageResponseTime);
+        Monitor test = new Monitor(topTenSearches, activeBarrelsNames, averageResponseTime);
+
+        System.out.println(test);
+
+        return test;
     }
 
     /**
@@ -286,22 +289,6 @@ public class GatewayImpl extends UnicastRemoteObject implements Gateway {
 
         return searchResult;
     }
-
-    private static String convertToString(List<URIInfo> result) {
-
-        String resultString = "";
-
-        for (int i = 0; i < result.size(); i++) {
-
-            resultString = "URL-> " + result.get(i).getUri().toString() + "\n" + "Title-> " + result.get(i).getTitle()
-                    + "\n" + "Description-> " + result.get(i).getDescription() + "\n";
-
-            System.out.println("a");
-        }
-
-        return resultString;
-    }
-
 
     public List<URI> searchURL(URI url) throws RemoteException {
         return barrels.get("test").searchURL(url);

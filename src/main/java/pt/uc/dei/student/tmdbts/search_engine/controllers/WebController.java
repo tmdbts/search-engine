@@ -20,6 +20,7 @@ import java.rmi.RemoteException;
 @Controller
 public class WebController {
     private final WebServerImpl webServer;
+
     private SearchResult searchResult;
 
     @Autowired
@@ -52,8 +53,10 @@ public class WebController {
         } else {
             try {
                 searchResult = webServer.searchQuery(queryStr);
+
                 model.addAttribute("result", searchResult);
-                model.addAttribute("url", searchResult.return10(0));
+                model.addAttribute("url", searchResult.getResults());
+
                 return "search";
             } catch (Exception e) {
                 e.printStackTrace();
@@ -61,6 +64,7 @@ public class WebController {
                 return "search";
             }
         }
+
         return "index";
     }
 
@@ -74,9 +78,10 @@ public class WebController {
             e.printStackTrace();
             model.addAttribute("result", "Error occurred: " + e.getMessage());
         }
+
         return "search";
     }*/
-    
+
     @GetMapping("/monitor")
     public String monitor(@ModelAttribute Monitor monitor, Model model) {
         model.addAttribute("monitor", monitor);
