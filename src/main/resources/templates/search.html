@@ -11,7 +11,7 @@
 <div class="container">
     <h1>Search Results</h1>
     <div th:if="${result != null}">
-        <p>Query Time: <span th:text="${result.queryTime}"></span> ms</p>
+        <p>Query Time: <span th:text="${result.getQueryTime()}"></span> ms</p>
         <ul>
             <li th:each="urlInfo : ${url}">
                 <p>URL: <a th:href="${urlInfo.uri}" th:text="${urlInfo.uri}"></a></p>
@@ -20,17 +20,19 @@
             </li>
         </ul>
     </div>
-    <!--<div th:if="${result == null}">
+    <div th:if="${result == null}">
         <p>No results found.</p>
     </div>
     <div class="navigation-buttons">
-        <button class="btn btn-secondary" th:if="${pageIndex > 0}"
-                th:href="@{/search(query=${query.query}, pageIndex=${pageIndex -1})}">Previous
-        </button>
-        <button class="btn btn-secondary" th:if="${paginatedResults != null}"
-                th:href="@{/search(query=${query.query}, pageIndex=${pageIndex + 1})}">Next
-        </button>
-    </div>-->
+        <form th:action="@{/search}" method="get" th:if="${(pageIndex ?: 0) > 0}">
+            <input type="hidden" name="pageIndex" th:value="${(pageIndex?: 0) - 1}"/>
+            <button class="btn btn-secondary" type="submit">Previous</button>
+        </form>
+        <form th:action="@{/search}" method="get">
+            <input type="hidden" name="pageIndex" th:value="${(pageIndex?: 0) + 1}"/>
+            <button class="btn btn-secondary" type="submit">Next</button>
+        </form>
+    </div>
     <a href="/" class="btn btn-primary">Back to Home</a>
 </div>
 </body>

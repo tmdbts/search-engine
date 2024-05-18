@@ -16,8 +16,10 @@ import java.util.Properties;
 
 public class WebServerImpl extends UnicastRemoteObject implements Client {
     private Gateway gateway;
-
+  
     private Monitor monitor;
+
+    String querySearch;
 
     public WebServerImpl() throws RemoteException {
         super();
@@ -43,7 +45,12 @@ public class WebServerImpl extends UnicastRemoteObject implements Client {
     }
 
     public SearchResult searchQuery(String query) throws RemoteException {
+        querySearch = query;
         return gateway.searchQuery(query);
+    }
+
+    public SearchResult searchQuery(int index) throws RemoteException {
+        return gateway.searchQuery(querySearch, index);
     }
 
     public void addURL(URI url) throws RemoteException {

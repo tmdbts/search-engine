@@ -8,6 +8,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import pt.uc.dei.student.tmdbts.search_engine.client.Monitor;
 import pt.uc.dei.student.tmdbts.search_engine.models.Query;
 import pt.uc.dei.student.tmdbts.search_engine.storage_barrels.SearchResult;
@@ -31,6 +32,7 @@ public class WebController {
      * Search result
      */
     private SearchResult searchResult;
+    private String queryStr;
 
     /**
      * Constructor
@@ -64,7 +66,7 @@ public class WebController {
      */
     @PostMapping("/search")
     public String searchUrl(@ModelAttribute Query query, Model model) throws RemoteException {
-        String queryStr = query.getQuery();
+        queryStr = query.getQuery();
         System.out.println("Query: " + queryStr);
         if (queryStr.startsWith("https://")) {
             URI url = null;
@@ -82,17 +84,33 @@ public class WebController {
             try {
                 searchResult = webServer.searchQuery(queryStr);
                 model.addAttribute("result", searchResult);
-                model.addAttribute("url", searchResult.return10(0));
+                model.addAttribute("url", searchResult.getResults());
                 return "search";
             } catch (Exception e) {
                 e.printStackTrace();
-                model.addAttribute("result", "Error occurred: " + e.getMessage());
+                //model.addAttribute("result", "Error occurred: " + e.getMessage());
                 return "search";
             }
         }
 
         return "index";
     }
+
+    @GetMapping("/search")
+    public String searchMore10(@RequestParam(name = "pageIndex", defaultValue = "0") int pageIndex, Model model) throws RemoteException {
+        try {
+            searchResult = webServer.searchQuery(pageIndex);
+            System.out.println("aqui " + pageIndex);
+            model.addAttribute("result", searchResult);
+            model.addAttribute("url", searchResult.getResults());
+            model.addAttribute("pageIndex", pageIndex);
+        } catch (Exception e) {
+            e.printStackTrace();
+            //model.addAttribute("result", "Error occurred: " + e.getMessage());
+        }
+        return "search";
+    }
+
 
     /**
      * Get request for monitor
