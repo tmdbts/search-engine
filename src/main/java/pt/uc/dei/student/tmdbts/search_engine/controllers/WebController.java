@@ -6,16 +6,13 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import pt.uc.dei.student.tmdbts.search_engine.models.Query;
 import pt.uc.dei.student.tmdbts.search_engine.storage_barrels.SearchResult;
-import pt.uc.dei.student.tmdbts.search_engine.storage_barrels.URIInfo;
 import pt.uc.dei.student.tmdbts.search_engine.webserver.WebServerImpl;
 
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.rmi.RemoteException;
-import java.util.ArrayList;
 
 @Controller
 public class WebController {
@@ -65,7 +62,7 @@ public class WebController {
         return "index";
     }
 
-    @GetMapping("/search")
+    /*@GetMapping("/search")
     public String searchMore10(@RequestParam(name = "pageIndex") int pageIndex, Model model) throws RemoteException {
         try {
             ArrayList<URIInfo> paginatedResults = searchResult.return10(pageIndex);
@@ -76,5 +73,5 @@ public class WebController {
             model.addAttribute("result", "Error occurred: " + e.getMessage());
         }
         return "search";
-    }
+    }*/
 }
