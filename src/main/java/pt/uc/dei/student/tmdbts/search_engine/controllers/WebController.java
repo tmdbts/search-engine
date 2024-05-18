@@ -32,6 +32,7 @@ public class WebController {
      * Search result
      */
     private SearchResult searchResult;
+  
     private String queryStr;
 
     /**
@@ -83,8 +84,10 @@ public class WebController {
         } else {
             try {
                 searchResult = webServer.searchQuery(queryStr);
+
                 model.addAttribute("result", searchResult);
                 model.addAttribute("url", searchResult.getResults());
+
                 return "search";
             } catch (Exception e) {
                 e.printStackTrace();
@@ -108,6 +111,7 @@ public class WebController {
             e.printStackTrace();
             //model.addAttribute("result", "Error occurred: " + e.getMessage());
         }
+
         return "search";
     }
 
