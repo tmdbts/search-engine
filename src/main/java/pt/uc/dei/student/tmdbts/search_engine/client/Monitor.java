@@ -31,6 +31,7 @@ public class Monitor implements Serializable {
     public Monitor(TopTenSearches topTenSearches, ArrayList<String> activeBarrels, long averageResponseTime) {
         this.topTenSearches = topTenSearches;
         this.activeBarrels = activeBarrels;
+        System.out.println("HERE " + activeBarrels);
         this.averageResponseTime = averageResponseTime;
     }
 
