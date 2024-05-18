@@ -2,12 +2,10 @@ package pt.uc.dei.student.tmdbts.search_engine.models;
 
 
 import java.io.Serializable;
-import java.net.URI;
 
 public class Query implements Serializable {
 
     private String query;
-    private URI url;
 
     public void setQuery(String query) {
         this.query = query;
@@ -15,13 +13,5 @@ public class Query implements Serializable {
 
     public String getQuery() {
         return query;
-    }
-
-    public void setUrl(URI url) {
-        this.url = url;
-    }
-
-    public URI getUrl() {
-        return url;
     }
 }
