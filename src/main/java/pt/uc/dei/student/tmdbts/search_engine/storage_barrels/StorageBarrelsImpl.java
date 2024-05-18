@@ -218,14 +218,6 @@ public class StorageBarrelsImpl extends UnicastRemoteObject implements StorageBa
         return resultString.toString();
     }
 
-    public String giveMore10(SearchResult searchResult, int index) {
-
-        String result = convertToString(searchResult.return10(index));
-        System.out.println("Result: " + result);
-
-        return result;
-    }
-
     public List<URI> searchURL(URI url) throws RemoteException {
         return urlList.get(url);
     }
