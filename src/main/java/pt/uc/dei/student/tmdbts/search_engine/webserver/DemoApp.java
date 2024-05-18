@@ -7,6 +7,9 @@ import org.springframework.context.annotation.ComponentScan;
 
 import java.rmi.RemoteException;
 
+/**
+ * Spring boot application
+ */
 @SpringBootApplication
 @ComponentScan(basePackages = "pt.uc.dei.student.tmdbts.search_engine")
 public class DemoApp {

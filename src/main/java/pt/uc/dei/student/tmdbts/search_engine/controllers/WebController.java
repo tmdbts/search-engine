@@ -32,7 +32,7 @@ public class WebController {
      * Search result
      */
     private SearchResult searchResult;
-  
+
     private String queryStr;
 
     /**
@@ -99,6 +99,12 @@ public class WebController {
         return "index";
     }
 
+    /**
+     * Get request for search
+     *
+     * @param model model
+     * @return search
+     */
     @GetMapping("/search")
     public String searchMore10(@RequestParam(name = "pageIndex", defaultValue = "0") int pageIndex, Model model) throws RemoteException {
         try {
@@ -129,6 +135,12 @@ public class WebController {
         return "monitor";
     }
 
+    /**
+     * Stuff for the socket
+     *
+     * @param monitor monitor
+     * @return monitor
+     */
     @MessageMapping("/monitor")
     @SendTo("/topic/monitor")
     public Monitor onMonitor(Monitor monitor) {

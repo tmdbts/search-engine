@@ -3,9 +3,18 @@ package pt.uc.dei.student.tmdbts.search_engine.gateway;
 import java.io.Serializable;
 import java.util.HashMap;
 
+/**
+ * This class represents the top 10 searches of the system
+ */
 public class TopTenSearches implements Serializable {
+    /**
+     * Search query frequency
+     */
     private HashMap<String, Integer> searchQueryFrequency = new HashMap<>();
 
+    /**
+     * Top 10 searches
+     */
     private HashMap<Integer, String> top10Searches = new HashMap<>();
 
     /**
@@ -26,6 +35,11 @@ public class TopTenSearches implements Serializable {
         searchQueryFrequency.put(query, 1);
     }
 
+    /**
+     * Get the top 10 searches
+     *
+     * @return the top 10 searches
+     */
     public HashMap<Integer, String> getTop10Searches() {
         HashMap<Integer, String> newTop = new HashMap<>();
 
@@ -37,6 +51,11 @@ public class TopTenSearches implements Serializable {
         return newTop;
     }
 
+    /**
+     * Check if the top 10 searches have changed
+     *
+     * @return the new top 10 searches
+     */
     public HashMap<Integer, String> didTopChange() {
         HashMap<Integer, String> newTop = getTop10Searches();
 
@@ -48,6 +67,12 @@ public class TopTenSearches implements Serializable {
         return getTopDifference(newTop);
     }
 
+    /**
+     * Get the difference between the new top 10 searches and the old top 10 searches
+     *
+     * @param newTop the new top 10 searches
+     * @return the difference between the new top 10 searches and the old top 10 searches
+     */
     private HashMap<Integer, String> getTopDifference(HashMap<Integer, String> newTop) {
         HashMap<Integer, String> difference = new HashMap<>();
 

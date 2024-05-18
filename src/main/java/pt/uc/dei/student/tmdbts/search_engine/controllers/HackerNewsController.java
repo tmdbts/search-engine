@@ -3,11 +3,8 @@ package pt.uc.dei.student.tmdbts.search_engine.controllers;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.messaging.support.AbstractSubscribableChannel;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.client.RestTemplate;
@@ -22,11 +19,6 @@ import java.util.ArrayList;
 public class HackerNewsController {
     private HackerNewsService hackerNewsService;
 
-    @Autowired
-    public HackerNewsController(HackerNewsService hackerNewsService) {
-        this.hackerNewsService = hackerNewsService;
-    }
-
     public ArrayList<URI> getTopStories(String query) {
         RestTemplate restTemplate = new RestTemplate();
         String endpoint = "https://hacker-news.firebaseio.com/v0/topstories.json?print=pretty";
@@ -39,7 +31,7 @@ public class HackerNewsController {
 
         try {
             JsonNode jsonRes = mapper.readTree(res.getBody());
-                System.out.println("Got URLs: ");
+            System.out.println("Got URLs: ");
             for (JsonNode node : jsonRes) {
                 URL uri = new URL("https://hacker-news.firebaseio.com/v0/item/" + node.asText() + ".json?print=pretty");
 
@@ -50,7 +42,7 @@ public class HackerNewsController {
         } catch (MalformedURLException e) {
             System.out.println("Invalid URL: " + e.getMessage());
         } catch (URISyntaxException e) {
-            System.out.println("Invalid URI: " + e.getMessage();
+            System.out.println("Invalid URI: " + e.getMessage());
         }
 
         return new ArrayList<>();
@@ -79,7 +71,6 @@ public class HackerNewsController {
         return topStories;
     }
 
-    @Autowired
     public void setHackerNewsService(HackerNewsService hackerNewsService) {
         this.hackerNewsService = hackerNewsService;
     }
