@@ -1,0 +1,11 @@
+pt.uc.dei.student.tmdbts.search_engine.client
+pt.uc.dei.student.tmdbts.search_engine.controllers
+pt.uc.dei.student.tmdbts.search_engine.downloader
+pt.uc.dei.student.tmdbts.search_engine.gateway
+pt.uc.dei.student.tmdbts.search_engine.models
+pt.uc.dei.student.tmdbts.search_engine.protocol
+pt.uc.dei.student.tmdbts.search_engine.records
+pt.uc.dei.student.tmdbts.search_engine.services
+pt.uc.dei.student.tmdbts.search_engine.storage_barrels
+pt.uc.dei.student.tmdbts.search_engine.url_queue
+pt.uc.dei.student.tmdbts.search_engine.webserver

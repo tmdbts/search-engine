@@ -2,13 +2,21 @@ package pt.uc.dei.student.tmdbts.search_engine.downloader;
 
 import pt.uc.dei.student.tmdbts.search_engine.gateway.Gateway;
 
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.HashSet;
+import java.util.Properties;
 
+/**
+ * Class that represents the Crawler
+ * <p>
+ * The Crawler is responsible for downloading the URLs.
+ */
 public class Crawler {
     /**
      * Main method of the Crawler class.
@@ -23,13 +31,23 @@ public class Crawler {
      * @apiNote Might make a ton of requests to the server.
      */
     public void run() {
+        String rootPath = System.getProperty("user.dir");
+        String appConfigPath = rootPath + "/app.properties";
+
+        Properties appProps = new Properties();
+        try {
+            appProps.load(new FileInputStream(appConfigPath));
+        } catch (IOException e) {
+            System.out.println("Error loading app properties: " + e.getMessage());
+        }
+
         HashSet<Thread> activeDownloaders = new HashSet<>();
 
         try {
-            Gateway gateway = (Gateway) Naming.lookup("rmi://localhost:32450/server");
+            Gateway gateway = (Gateway) Naming.lookup("rmi://" + appProps.get("rmi_server_hostname") + ":" + appProps.get("rmi_server_port") + "/server");
 
             while (true) {
-                if (activeDownloaders.size() >= 5) { /* TODO: Magic number */
+                if (activeDownloaders.size() >= Integer.parseInt((String) appProps.get("max_downloaders"))) { /* TODO: Magic number */
                     activeDownloaders.removeIf(thread -> !thread.isAlive());
 
                     continue;

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8">
+    <title>Googol | Monitor</title>
+</head>
+<body>
+<div class="monitor-wrapper">
+    <div class="monitor-header">
+        <h1>Googol Monitor</h1>
+    </div>
+    <div class="monitor-content">
+        <div>
+            <p>Average query time: <span id="averageQueryTime"></span></p>
+        </div>
+        <div>
+            <h3>Active Barrels</h3>
+            <div id="barrelList">
+            </div>
+        </div>
+        <div>
+            <h3>Top 10 Searches</h3>
+            <div id="topTenSearches"></div>
+        </div>
+    </div>
+</div>
+</body>
+<script>
+    document.addEventListener('DOMContentLoaded', () => displayMonitor())
+</script>
+</html>

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Results</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body, html {
+            width: 100%;
+            height: 100vh;
+            margin: 0;
+            padding: 1rem;
+            font-family: Arial, Helvetica, sans-serif;
+            background: linear-gradient(to bottom right, #00FF00, #228B22);
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .navigation-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 1rem;
+        }
+
+        .navigation-buttons button {
+            background-color: white;
+            color: black;
+            border: 2px solid transparent; /* Ensure borders are visible */
+        }
+
+        .btn-home {
+            background-color: #32CD32;
+            color: white;
+            border-color: #32CD32;
+        }
+
+        .btn-home:hover, .btn-home:focus {
+            background-color: white;
+            color: #32CD32;
+            border-color: #32CD32;
+        }
+
+        .btn-next {
+            border-color: #32CD32;
+        }
+
+        .btn-next:hover {
+            background-color: #32CD32;
+            color: white;
+            border-color: #32CD32;
+        }
+
+        @media (max-width: 767.98px) {
+            .navigation-buttons {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .navigation-buttons button {
+                margin-bottom: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container mt-4">
+    <h1>Search Results</h1>
+    <div th:if="${result != null}">
+        <p>Query Time: <span th:text="${result.getQueryTime()}"></span> ms</p>
+        <ul class="list-group">
+            <li class="list-group-item" th:each="urlInfo : ${url}">
+                <p>URL: <a th:href="${urlInfo.uri}" th:text="${urlInfo.uri}"></a></p>
+                <p>Title: <span th:text="${urlInfo.title}"></span></p>
+                <p>Description: <span th:text="${urlInfo.description}"></span></p>
+            </li>
+        </ul>
+    </div>
+    <div th:if="${result == null}">
+        <p>No results found.</p>
+    </div>
+    <div class="navigation-buttons">
+        <form th:action="@{/search}" method="get" th:if="${(pageIndex ?: 0) > 0}">
+            <input type="hidden" name="pageIndex" th:value="${(pageIndex ?: 0) - 1}"/>
+            <button class="btn btn-secondary" type="submit">Previous</button>
+        </form>
+        <form th:action="@{/search}" method="get">
+            <input type="hidden" name="pageIndex" th:value="${(pageIndex ?: 0) + 1}"/>
+            <button class="btn btn-secondary btn-next" type="submit">Next</button>
+        </form>
+    </div>
+    <a href="/" class="btn btn-primary mt-3 btn-home">Back to Home</a>
+</div>
+</body>
+</html>

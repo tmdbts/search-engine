@@ -14,6 +14,7 @@ chose one of the following:
 
 - Safe writes. Either to one or to none
 - Barrel persistence
+- Should make the pagination
 
 ## Config
 
