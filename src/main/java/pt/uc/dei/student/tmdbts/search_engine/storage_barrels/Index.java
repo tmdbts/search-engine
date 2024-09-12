@@ -39,22 +39,25 @@ public class Index {
 
             ArrayList<URI> currentURL = new ArrayList<>();
 
-            if (index.get(item) != null && index.get(item).toString().equals(current.toString())) {
+            String word = item.trim();
+
+            if (index.get(word) != null && index.get(word).toString().equals(current.toString())) {
                 continue;
-            } else if (index.get(item) != null && !index.get(item).contains(current)) {
-                index.get(item).add(current);
+            } else if (index.get(word) != null && !index.get(word).contains(current)) {
+                index.get(word).add(current);
             } else {
                 currentURL.add(current);
-                index.put(item, currentURL);
+                index.put(word, currentURL);
             }
 
-            Path path = Path.of("./persistence/index.txt");
+        }
 
-            try {
-                FileReadWriter.writeIndexData(index, path.toString());
-            } catch (Exception e) {
-                System.err.println("Error writing to file in Index: " + e.getMessage());
-            }
+        Path path = Path.of("./persistence/index.txt");
+
+        try {
+            FileReadWriter.writeIndexData(index, path.toString());
+        } catch (Exception e) {
+            System.err.println("Error writing to file in Index: " + e.getMessage());
         }
     }
 

@@ -53,7 +53,7 @@ public class WebServerImpl extends UnicastRemoteObject implements Client {
 
         try {
             properties.load(new FileInputStream(appConfigPath));
-
+            System.out.println(properties);
             gateway = (Gateway) Naming.lookup("rmi://" + properties.get("rmi_server_hostname") + ":" + properties.get("rmi_server_port") + "/server");
             gateway.registerForCallback(this.hashCode(), this);
         } catch (Exception e) {

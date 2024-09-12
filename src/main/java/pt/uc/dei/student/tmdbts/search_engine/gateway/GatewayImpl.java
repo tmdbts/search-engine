@@ -260,22 +260,22 @@ public class GatewayImpl extends UnicastRemoteObject implements Gateway {
 
         topTenSearches.addSearchQueryFrequency(query);
 
-        HashMap<Integer, String> resultTop = topTenSearches.didTopChange();
-
-        MonitorUpdate monitor = new MonitorUpdate(topTenSearches, averageResponseTime);
-
-        System.out.println("Sending monitor update to clients");
-
-        if (resultTop != null) {
-            for (Map.Entry<Integer, Client> entry : clients.entrySet()) {
-                Integer id = entry.getKey();
-                Client client = entry.getValue();
-
-                System.out.println("Sending monitor update to client " + id);
-                //client.updateMonitor(monitor);
-                System.out.println("Monitor update sent to client " + id);
-            }
-        }
+//        HashMap<Integer, String> resultTop = topTenSearches.didTopChange();
+//
+//        MonitorUpdate monitor = new MonitorUpdate(topTenSearches, averageResponseTime);
+//
+//        System.out.println("Sending monitor update to clients");
+//
+//        if (resultTop != null) {
+//            for (Map.Entry<Integer, Client> entry : clients.entrySet()) {
+//                Integer id = entry.getKey();
+//                Client client = entry.getValue();
+//
+//                System.out.println("Sending monitor update to client " + id);
+//                client.updateMonitor(monitor);
+//                System.out.println("Monitor update sent to client " + id);
+//            }
+//        }
 
         return searchResult;
     }
@@ -305,15 +305,15 @@ public class GatewayImpl extends UnicastRemoteObject implements Gateway {
 
         topTenSearches.addSearchQueryFrequency(query);
 
-        HashMap<Integer, String> resultTop = topTenSearches.didTopChange();
+//        HashMap<Integer, String> resultTop = topTenSearches.didTopChange();
 
-        MonitorUpdate monitor = new MonitorUpdate(topTenSearches, averageResponseTime);
+//        MonitorUpdate monitor = new MonitorUpdate(topTenSearches, averageResponseTime);
 
-        if (resultTop != null) {
-            for (Client client : clients.values()) {
-                client.updateMonitor(monitor);
-            }
-        }
+//        if (resultTop != null) {
+//            for (Client client : clients.values()) {
+//                client.updateMonitor(monitor);
+//            }
+//        }
 
         return searchResult;
     }
